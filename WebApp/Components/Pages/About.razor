@@ -3,27 +3,45 @@
 
 <PageTitle>Minust</PageTitle>
 
-@if (photographer is null)
-{
-    <p>Laen…</p>
-}
-else
-{
-    <div class="row">
-        @if (!string.IsNullOrEmpty(photographer.ProfileImageUrl))
-        {
-            <div class="col-md-4">
-                <img src="@photographer.ProfileImageUrl" alt="@photographer.Name" class="img-fluid rounded" />
+<div class="container section">
+    @if (photographer is null)
+    {
+        <div class="text-center"><div class="spinner-border" role="status"></div></div>
+    }
+    else
+    {
+        <p class="section-title">Minust</p>
+        <div class="about-grid">
+            <div>
+                @if (!string.IsNullOrEmpty(photographer.ProfileImageUrl))
+                {
+                    <img src="@photographer.ProfileImageUrl" alt="@photographer.Name" class="about-photo" />
+                }
+                else
+                {
+                    <div class="about-photo d-flex align-items-center justify-content-center"
+                         style="background:var(--color-surface);color:var(--color-muted);">
+                        Foto puudub
+                    </div>
+                }
             </div>
-        }
-        <div class="col">
-            <h1>@photographer.Name</h1>
-            <p class="text-muted"><a href="mailto:@photographer.Email">@photographer.Email</a></p>
-            <p style="white-space: pre-wrap">@photographer.About</p>
-            <SocialLinksBar Links="photographer.SocialLinks" />
+            <div>
+                <h1 class="mb-1">@photographer.Name</h1>
+                <p style="color:var(--color-muted);font-size:0.85rem;letter-spacing:0.1em;">
+                    <a href="mailto:@photographer.Email">@photographer.Email</a>
+                </p>
+                <div class="hero-divider" style="margin:1.5rem 0;"></div>
+                @if (!string.IsNullOrEmpty(photographer.About))
+                {
+                    <p class="about-bio">@photographer.About</p>
+                }
+                <div class="mt-4">
+                    <SocialLinksBar Links="photographer.SocialLinks" />
+                </div>
+            </div>
         </div>
-    </div>
-}
+    }
+</div>
 
 @code {
     private Photographer? photographer;

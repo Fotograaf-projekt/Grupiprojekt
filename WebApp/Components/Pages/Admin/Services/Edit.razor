@@ -6,6 +6,7 @@
 
 <PageTitle>Admin · Muuda teenust</PageTitle>
 
+<div class="container admin-panel">
 <h1>Muuda teenust</h1>
 
 @if (model is null)
@@ -46,6 +47,8 @@ else
         </div>
     </div>
 }
+
+</div>
 
 @code {
     [Parameter] public int Id { get; set; }

@@ -5,35 +5,34 @@
 
 @if (photographer is null)
 {
-    <div class="text-center py-5">
-        <div class="spinner-border text-secondary" role="status"></div>
+    <div class="hero">
+        <div class="spinner-border" role="status"></div>
     </div>
 }
 else
 {
-    <div class="hero text-center py-5">
+    <div class="hero">
         @if (!string.IsNullOrEmpty(photographer.ProfileImageUrl))
         {
-            <img src="@photographer.ProfileImageUrl" alt="@photographer.Name"
-                 class="rounded-circle mb-4" style="width:160px;height:160px;object-fit:cover;" />
+            <img src="@photographer.ProfileImageUrl" alt="@photographer.Name" class="hero-avatar" />
         }
-        <h1 class="display-4 fw-bold">@photographer.Name</h1>
-        <p class="lead text-muted">Fotograaf</p>
+
+        <p class="section-title">Fotograaf</p>
+        <h1>@photographer.Name</h1>
+        <div class="hero-divider"></div>
+
+        @if (!string.IsNullOrEmpty(photographer.About))
+        {
+            <p class="text-muted" style="max-width:480px;font-size:0.95rem;">@photographer.About</p>
+        }
+
         <SocialLinksBar Links="photographer.SocialLinks" />
-        <div class="mt-4">
-            <a href="/about" class="btn btn-outline-secondary me-2">Minust</a>
-            <a href="/services" class="btn btn-dark">Teenused</a>
+
+        <div class="mt-4 d-flex gap-3">
+            <a href="/about" class="btn btn-outline-secondary">Minust</a>
+            <a href="/services" class="btn btn-primary">Teenused</a>
         </div>
     </div>
-
-    @if (!string.IsNullOrEmpty(photographer.About))
-    {
-        <div class="row justify-content-center mt-5">
-            <div class="col-md-8">
-                <p class="text-center" style="white-space:pre-wrap">@photographer.About</p>
-            </div>
-        </div>
-    }
 }
 
 @code {

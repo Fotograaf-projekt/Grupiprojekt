@@ -6,6 +6,7 @@
 
 <PageTitle>Admin · Kustuta link</PageTitle>
 
+<div class="container admin-panel">
 <h1>Kustuta link</h1>
 
 @if (model is null)
@@ -28,6 +29,8 @@ else
     <button class="btn btn-danger me-2" @onclick="Confirm">Jah, kustuta</button>
     <a href="/admin/social-links" class="btn btn-outline-secondary">Tühista</a>
 }
+
+</div>
 
 @code {
     [Parameter] public int Id { get; set; }

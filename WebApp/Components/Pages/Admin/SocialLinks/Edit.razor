@@ -6,6 +6,7 @@
 
 <PageTitle>Admin · Muuda linki</PageTitle>
 
+<div class="container admin-panel">
 <h1>Muuda linki</h1>
 
 @if (model is null)
@@ -42,6 +43,8 @@ else
         </div>
     </div>
 }
+
+</div>
 
 @code {
     [Parameter] public int Id { get; set; }

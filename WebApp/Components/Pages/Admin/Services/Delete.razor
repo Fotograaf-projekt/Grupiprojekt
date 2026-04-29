@@ -6,6 +6,7 @@
 
 <PageTitle>Admin · Kustuta teenus</PageTitle>
 
+<div class="container admin-panel">
 <h1>Kustuta teenus</h1>
 
 @if (model is null)
@@ -30,6 +31,8 @@ else
     <button class="btn btn-danger me-2" @onclick="Confirm">Jah, kustuta</button>
     <a href="/admin/services" class="btn btn-outline-secondary">Tühista</a>
 }
+
+</div>
 
 @code {
     [Parameter] public int Id { get; set; }
