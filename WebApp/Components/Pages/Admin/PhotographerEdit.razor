@@ -5,7 +5,7 @@
 
 <PageTitle>Admin · Profiil</PageTitle>
 
-<div class="container admin-panel">
+<div class="admin-wrap">
     <h1>Profiil</h1>
 
     @if (model is null)
@@ -14,36 +14,34 @@
     }
     else
     {
-        <div class="row">
-            <div class="col-md-6">
-                <EditForm Model="model" OnValidSubmit="Save">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary class="text-danger" />
+        <div style="max-width:520px;">
+            <EditForm Model="model" OnValidSubmit="Save">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger" />
 
-                    <div class="mb-3">
-                        <label class="form-label">Nimi</label>
-                        <InputText class="form-control" @bind-Value="model.Name" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Email</label>
-                        <InputText class="form-control" @bind-Value="model.Email" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Profiilipildi URL</label>
-                        <InputText class="form-control" @bind-Value="model.ProfileImageUrl" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Minust</label>
-                        <InputTextArea class="form-control" rows="6" @bind-Value="model.About" />
-                    </div>
+                <div class="mb-3">
+                    <label class="form-label">Nimi</label>
+                    <InputText class="form-control" @bind-Value="model.Name" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <InputText class="form-control" @bind-Value="model.Email" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Profiilipildi URL</label>
+                    <InputText class="form-control" @bind-Value="model.ProfileImageUrl" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Minust</label>
+                    <InputTextArea class="form-control" rows="6" @bind-Value="model.About" />
+                </div>
 
-                    <button type="submit" class="btn btn-primary">Salvesta</button>
-                    @if (saved)
-                    {
-                        <span class="ms-3" style="color:var(--color-accent);font-size:0.85rem;">✓ Salvestatud</span>
-                    }
-                </EditForm>
-            </div>
+                <button type="submit" class="btn btn-primary">Salvesta</button>
+                @if (saved)
+                {
+                    <span style="margin-left:1rem;font-size:0.8rem;color:var(--muted);">✓ Salvestatud</span>
+                }
+            </EditForm>
         </div>
     }
 </div>

@@ -1,45 +1,58 @@
 @page "/"
 @inject PhotographerService PhotographerService
 
-<PageTitle>Avaleht</PageTitle>
+<PageTitle>@(photographer?.Name ?? "Fotograaf")</PageTitle>
 
-@if (photographer is null)
+@* Hero – täisekraani portreefoto *@
+<div class="hero-panel"
+     style="background-image: url('https://picsum.photos/seed/photohero/1200/900?grayscale')">
+</div>
+
+@* Teenuste galeriipaneelid *@
+@if (services is not null)
 {
-    <div class="hero">
-        <div class="spinner-border" role="status"></div>
-    </div>
+    @foreach (var s in services)
+    {
+        <a href="/services" class="gallery-panel"
+           style="background-image: url('https://picsum.photos/seed/svc@(s.Id)/1200/750?grayscale'); display:block;">
+            <div class="gallery-panel-content">
+                <span class="panel-label">@s.Name</span>
+                <span class="panel-arrow">→</span>
+            </div>
+        </a>
+    }
 }
-else
+
+@* CTA *@
+<div class="cta-section">
+    <a href="/services" class="btn-cta">Vaata kõiki teenuseid</a>
+</div>
+
+@* Tsitaat *@
+<div class="quote-section">
+    <blockquote>
+        "Photography is an art of observation. It has little to do with the things you see
+        and everything to do with the way you see them."
+    </blockquote>
+    <cite>— Elliott Erwitt</cite>
+</div>
+
+@* Sotsiaalmeedia *@
+@if (photographer?.SocialLinks?.Count > 0)
 {
-    <div class="hero">
-        @if (!string.IsNullOrEmpty(photographer.ProfileImageUrl))
-        {
-            <img src="@photographer.ProfileImageUrl" alt="@photographer.Name" class="hero-avatar" />
-        }
-
-        <p class="section-title">Fotograaf</p>
-        <h1>@photographer.Name</h1>
-        <div class="hero-divider"></div>
-
-        @if (!string.IsNullOrEmpty(photographer.About))
-        {
-            <p class="text-muted" style="max-width:480px;font-size:0.95rem;">@photographer.About</p>
-        }
-
+    <div style="padding: 0 2.5rem 4rem; text-align:center;">
         <SocialLinksBar Links="photographer.SocialLinks" />
-
-        <div class="mt-4 d-flex gap-3">
-            <a href="/about" class="btn btn-outline-secondary">Minust</a>
-            <a href="/services" class="btn btn-primary">Teenused</a>
-        </div>
     </div>
 }
 
 @code {
     private Photographer? photographer;
+    private List<Service> services = new();
 
     protected override async Task OnInitializedAsync()
     {
         photographer = await PhotographerService.GetMainAsync();
+        if (photographer is not null)
+            services = await PhotographerService.ServicesForAsync(photographer.Id);
     }
 }

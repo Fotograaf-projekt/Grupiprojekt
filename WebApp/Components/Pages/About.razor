@@ -3,41 +3,48 @@
 
 <PageTitle>Minust</PageTitle>
 
-<div class="container section">
+<div class="about-wrap">
     @if (photographer is null)
     {
-        <div class="text-center"><div class="spinner-border" role="status"></div></div>
+        <div class="text-center py-5"><div class="spinner-border" role="status"></div></div>
     }
     else
     {
-        <p class="section-title">Minust</p>
         <div class="about-grid">
             <div>
-                @if (!string.IsNullOrEmpty(photographer.ProfileImageUrl))
-                {
-                    <img src="@photographer.ProfileImageUrl" alt="@photographer.Name" class="about-photo" />
-                }
-                else
-                {
-                    <div class="about-photo d-flex align-items-center justify-content-center"
-                         style="background:var(--color-surface);color:var(--color-muted);">
-                        Foto puudub
-                    </div>
-                }
+                <img src="@(string.IsNullOrEmpty(photographer.ProfileImageUrl)
+                            ? "https://picsum.photos/seed/portrait/700/950?grayscale"
+                            : photographer.ProfileImageUrl)"
+                     alt="@photographer.Name"
+                     class="about-photo" />
             </div>
-            <div>
-                <h1 class="mb-1">@photographer.Name</h1>
-                <p style="color:var(--color-muted);font-size:0.85rem;letter-spacing:0.1em;">
-                    <a href="mailto:@photographer.Email">@photographer.Email</a>
+            <div class="about-text">
+                <p class="eyebrow" style="font-size:0.7rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--muted);margin-bottom:0.5rem;">
+                    Fotograaf
                 </p>
-                <div class="hero-divider" style="margin:1.5rem 0;"></div>
+                <h1>@photographer.Name</h1>
+                <div class="about-divider"></div>
+
                 @if (!string.IsNullOrEmpty(photographer.About))
                 {
                     <p class="about-bio">@photographer.About</p>
                 }
-                <div class="mt-4">
-                    <SocialLinksBar Links="photographer.SocialLinks" />
+
+                <div style="margin-top:2rem;">
+                    <p style="font-size:0.72rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-bottom:0.75rem;">
+                        Kontakt
+                    </p>
+                    <a href="mailto:@photographer.Email" style="color:var(--dark);border-bottom:1px solid var(--border);">
+                        @photographer.Email
+                    </a>
                 </div>
+
+                @if (photographer.SocialLinks?.Count > 0)
+                {
+                    <div style="margin-top:2rem;">
+                        <SocialLinksBar Links="photographer.SocialLinks" />
+                    </div>
+                }
             </div>
         </div>
     }

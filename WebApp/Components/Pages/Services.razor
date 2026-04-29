@@ -3,28 +3,38 @@
 
 <PageTitle>Teenused</PageTitle>
 
-<div class="container section">
-    <p class="section-title">Mida pakun</p>
-    <h1 class="mb-5">Teenused</h1>
+<div class="services-wrap">
+    <div class="services-header">
+        <p class="eyebrow" style="font-size:0.7rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--muted);margin-bottom:0.5rem;">
+            Mida pakun
+        </p>
+        <h1>Teenused</h1>
+    </div>
 
     @if (services is null)
     {
-        <div class="text-center"><div class="spinner-border" role="status"></div></div>
+        <div class="text-center py-5"><div class="spinner-border" role="status"></div></div>
     }
     else if (services.Count == 0)
     {
-        <p style="color:var(--color-muted)">Hetkel teenuseid pole.</p>
+        <p style="color:var(--muted)">Teenuseid pole hetkel lisatud.</p>
     }
     else
     {
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        <div class="services-grid">
             @foreach (var s in services)
             {
-                <div class="col">
-                    <div class="service-card">
-                        <span class="price">@s.Price.ToString("0.##") €</span>
-                        <h3>@s.Name</h3>
-                        <p>@s.Description</p>
+                <div class="service-item"
+                     style="background-image: url('https://picsum.photos/seed/srv@(s.Id + 10)/800/600?grayscale')">
+                    <div class="service-item-content">
+                        <span class="s-name">@s.Name</span>
+                        <span class="s-price">@s.Price.ToString("0") €</span>
+                        @if (!string.IsNullOrEmpty(s.Description))
+                        {
+                            <p style="font-size:0.78rem;color:rgba(255,255,255,0.65);margin-top:0.3rem;max-width:220px;line-height:1.5;">
+                                @s.Description
+                            </p>
+                        }
                     </div>
                 </div>
             }

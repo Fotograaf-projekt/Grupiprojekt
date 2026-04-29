@@ -1,74 +1,66 @@
 @implements IDisposable
-@inject NavigationManager NavigationManager
+@inject NavigationManager Nav
 
-<nav class="navbar navbar-expand-lg site-navbar">
-    <div class="container">
-        <a class="navbar-brand" href="/">FOTO</a>
+<nav class="site-navbar">
+    <a class="navbar-brand" href="/">
+        FOTO<br />GRAAF
+    </a>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarMain">
-            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
-                <li class="nav-item">
-                    <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">Avaleht</NavLink>
-                </li>
-                <li class="nav-item">
-                    <NavLink class="nav-link" href="/about">Minust</NavLink>
-                </li>
-                <li class="nav-item">
-                    <NavLink class="nav-link" href="/services">Teenused</NavLink>
-                </li>
-
-                <AuthorizeView>
-                    <Authorized>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button"
-                               data-bs-toggle="dropdown">Admin</a>
-                            <ul class="dropdown-menu dropdown-menu-end admin-dropdown">
-                                <li><a class="dropdown-item" href="/admin/photographer">Profiil</a></li>
-                                <li><a class="dropdown-item" href="/admin/services">Teenused</a></li>
-                                <li><a class="dropdown-item" href="/admin/social-links">Sotsiaalmeedia</a></li>
-                                <li><hr class="dropdown-divider" /></li>
-                                <li>
-                                    <form action="Account/Logout" method="post" class="d-inline">
-                                        <AntiforgeryToken />
-                                        <input type="hidden" name="ReturnUrl" value="@currentUrl" />
-                                        <button type="submit" class="dropdown-item">Logi välja</button>
-                                    </form>
-                                </li>
-                            </ul>
-                        </li>
-                    </Authorized>
-                    <NotAuthorized>
-                        <li class="nav-item">
-                            <a class="nav-link nav-login" href="Account/Login">Logi sisse</a>
-                        </li>
-                    </NotAuthorized>
-                </AuthorizeView>
-            </ul>
+    <button class="navbar-menu-btn" @onclick="ToggleMenu">
+        MENU
+        <div class="hamburger">
+            <span></span><span></span>
         </div>
-    </div>
+    </button>
 </nav>
 
+<div class="nav-overlay @(menuOpen ? "open" : "")">
+    <button class="nav-overlay-close" @onclick="ToggleMenu">✕ SULGE</button>
+    <ul class="nav-overlay-links">
+        <li><a href="/" @onclick="ToggleMenu">Avaleht</a></li>
+        <li><a href="/about" @onclick="ToggleMenu">Minust</a></li>
+        <li><a href="/services" @onclick="ToggleMenu">Teenused</a></li>
+        <AuthorizeView>
+            <Authorized>
+                <li><a href="/admin/photographer" @onclick="ToggleMenu">Admin · Profiil</a></li>
+                <li><a href="/admin/services" @onclick="ToggleMenu">Admin · Teenused</a></li>
+                <li><a href="/admin/social-links" @onclick="ToggleMenu">Admin · Sotsiaalmeedia</a></li>
+                <li>
+                    <form action="Account/Logout" method="post">
+                        <AntiforgeryToken />
+                        <input type="hidden" name="ReturnUrl" value="@currentUrl" />
+                        <button type="submit"
+                                style="background:none;border:none;padding:0;font-family:inherit;font-size:2.5rem;font-weight:300;color:var(--dark);cursor:pointer;letter-spacing:0.05em;">
+                            Logi välja
+                        </button>
+                    </form>
+                </li>
+            </Authorized>
+            <NotAuthorized>
+                <li><a href="Account/Login" @onclick="ToggleMenu">Logi sisse</a></li>
+            </NotAuthorized>
+        </AuthorizeView>
+    </ul>
+</div>
+
 @code {
+    private bool menuOpen;
     private string? currentUrl;
 
     protected override void OnInitialized()
     {
-        currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
-        NavigationManager.LocationChanged += OnLocationChanged;
+        currentUrl = Nav.ToBaseRelativePath(Nav.Uri);
+        Nav.LocationChanged += OnLocationChanged;
     }
+
+    private void ToggleMenu() => menuOpen = !menuOpen;
 
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
     {
-        currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
+        menuOpen = false;
+        currentUrl = Nav.ToBaseRelativePath(e.Location);
         StateHasChanged();
     }
 
-    public void Dispose()
-    {
-        NavigationManager.LocationChanged -= OnLocationChanged;
-    }
+    public void Dispose() => Nav.LocationChanged -= OnLocationChanged;
 }
