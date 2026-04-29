@@ -1,0 +1,75 @@
+@page "/admin/services/edit/{Id:int}"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@rendermode InteractiveServer
+@inject PhotographerService PhotographerService
+@inject NavigationManager Nav
+
+<PageTitle>Admin · Muuda teenust</PageTitle>
+
+<h1>Muuda teenust</h1>
+
+@if (model is null)
+{
+    <div class="spinner-border" role="status"></div>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-6">
+            <EditForm Model="model" OnValidSubmit="Save">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger" />
+
+                <div class="mb-3">
+                    <label class="form-label">Nimi</label>
+                    <InputText class="form-control" @bind-Value="model.Name" />
+                    <ValidationMessage For="() => model.Name" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Hind (€)</label>
+                    <InputNumber class="form-control" @bind-Value="model.Price" />
+                    <ValidationMessage For="() => model.Price" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Kirjeldus</label>
+                    <InputTextArea class="form-control" rows="4" @bind-Value="model.Description" />
+                </div>
+
+                @if (!string.IsNullOrEmpty(error))
+                {
+                    <div class="alert alert-danger">@error</div>
+                }
+
+                <button type="submit" class="btn btn-primary me-2">Salvesta</button>
+                <a href="/admin/services" class="btn btn-outline-secondary">Tühista</a>
+            </EditForm>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private Service? model;
+    private string? error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        model = await PhotographerService.FindServiceAsync(Id);
+        if (model is null)
+            Nav.NavigateTo("/admin/services");
+    }
+
+    private async Task Save()
+    {
+        try
+        {
+            await PhotographerService.UpdateServiceAsync(model!);
+            Nav.NavigateTo("/admin/services");
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+    }
+}

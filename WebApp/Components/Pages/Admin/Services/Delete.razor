@@ -1,0 +1,51 @@
+@page "/admin/services/delete/{Id:int}"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@rendermode InteractiveServer
+@inject PhotographerService PhotographerService
+@inject NavigationManager Nav
+
+<PageTitle>Admin · Kustuta teenus</PageTitle>
+
+<h1>Kustuta teenus</h1>
+
+@if (model is null)
+{
+    <div class="spinner-border" role="status"></div>
+}
+else
+{
+    <div class="alert alert-warning">
+        Oled kindel, et tahad kustutada teenuse <strong>@model.Name</strong>?
+    </div>
+
+    <dl class="row">
+        <dt class="col-sm-3">Nimi</dt>
+        <dd class="col-sm-9">@model.Name</dd>
+        <dt class="col-sm-3">Hind</dt>
+        <dd class="col-sm-9">@model.Price.ToString("0.00") €</dd>
+        <dt class="col-sm-3">Kirjeldus</dt>
+        <dd class="col-sm-9">@model.Description</dd>
+    </dl>
+
+    <button class="btn btn-danger me-2" @onclick="Confirm">Jah, kustuta</button>
+    <a href="/admin/services" class="btn btn-outline-secondary">Tühista</a>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private Service? model;
+
+    protected override async Task OnInitializedAsync()
+    {
+        model = await PhotographerService.FindServiceAsync(Id);
+        if (model is null)
+            Nav.NavigateTo("/admin/services");
+    }
+
+    private async Task Confirm()
+    {
+        await PhotographerService.RemoveServiceAsync(Id);
+        Nav.NavigateTo("/admin/services");
+    }
+}

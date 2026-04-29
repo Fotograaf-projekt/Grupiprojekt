@@ -1,10 +1,9 @@
-﻿@implements IDisposable
-
+@implements IDisposable
 @inject NavigationManager NavigationManager
 
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">WebApp</a>
+        <a class="navbar-brand" href="/">Fotograaf</a>
     </div>
 </div>
 
@@ -12,61 +11,47 @@
 
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="nav flex-column">
+
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+            <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
+                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Avaleht
             </NavLink>
         </div>
 
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
+            <NavLink class="nav-link" href="/about">
+                <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> Minust
             </NavLink>
         </div>
 
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="about">
-                <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> About
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="services">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Services
+            <NavLink class="nav-link" href="/services">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Teenused
             </NavLink>
         </div>
 
         <AuthorizeView>
             <Authorized>
+                <hr class="text-light my-2" />
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="admin/photographer">
-                        <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> Admin · Profiil
+                    <NavLink class="nav-link" href="/admin/photographer">
+                        <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> Profiil
                     </NavLink>
                 </div>
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="admin/services">
-                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Admin · Teenused
+                    <NavLink class="nav-link" href="/admin/services">
+                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Teenused
                     </NavLink>
                 </div>
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="admin/social-links">
-                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Admin · Social
+                    <NavLink class="nav-link" href="/admin/social-links">
+                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Sotsiaalmeedia
                     </NavLink>
                 </div>
-            </Authorized>
-        </AuthorizeView>
-
-        <AuthorizeView>
-            <Authorized>
+                <hr class="text-light my-2" />
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="Account/Manage">
-                        <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> @context.User.Identity?.Name
+                    <NavLink class="nav-link" href="/Account/Manage">
+                        <span class="bi bi-gear-fill-nav-menu" aria-hidden="true"></span> @context.User.Identity?.Name
                     </NavLink>
                 </div>
                 <div class="nav-item px-3">
@@ -74,24 +59,21 @@
                         <AntiforgeryToken />
                         <input type="hidden" name="ReturnUrl" value="@currentUrl" />
                         <button type="submit" class="nav-link">
-                            <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logout
+                            <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logi välja
                         </button>
                     </form>
                 </div>
             </Authorized>
             <NotAuthorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="Account/Register">
-                        <span class="bi bi-person-nav-menu" aria-hidden="true"></span> Register
-                    </NavLink>
-                </div>
+                <hr class="text-light my-2" />
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="Account/Login">
-                        <span class="bi bi-person-badge-nav-menu" aria-hidden="true"></span> Login
+                        <span class="bi bi-person-badge-nav-menu" aria-hidden="true"></span> Logi sisse
                     </NavLink>
                 </div>
             </NotAuthorized>
         </AuthorizeView>
+
     </nav>
 </div>
 
@@ -115,4 +97,3 @@
         NavigationManager.LocationChanged -= OnLocationChanged;
     }
 }
-

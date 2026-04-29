@@ -1,0 +1,58 @@
+@page "/admin/social-links"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@rendermode InteractiveServer
+@inject PhotographerService PhotographerService
+
+<PageTitle>Admin · Sotsiaalmeedia</PageTitle>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Sotsiaalmeedia lingid</h1>
+    <a href="/admin/social-links/create" class="btn btn-primary">+ Lisa uus</a>
+</div>
+
+@if (links is null)
+{
+    <div class="spinner-border" role="status"></div>
+}
+else if (links.Count == 0)
+{
+    <p class="text-muted">Linke pole. <a href="/admin/social-links/create">Lisa esimene.</a></p>
+}
+else
+{
+    <table class="table table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Platvorm</th>
+                <th>URL</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var l in links)
+            {
+                <tr>
+                    <td>@l.Platform</td>
+                    <td><a href="@l.Url" target="_blank">@l.Url</a></td>
+                    <td class="text-end">
+                        <a href="/admin/social-links/edit/@l.Id" class="btn btn-sm btn-outline-primary me-1">Muuda</a>
+                        <a href="/admin/social-links/delete/@l.Id" class="btn btn-sm btn-outline-danger">Kustuta</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<SocialLink>? links;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var photographer = await PhotographerService.GetMainAsync();
+        if (photographer is not null)
+            links = await PhotographerService.SocialLinksForAsync(photographer.Id);
+        else
+            links = new();
+    }
+}

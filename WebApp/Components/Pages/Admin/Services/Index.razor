@@ -1,0 +1,61 @@
+@page "/admin/services"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@rendermode InteractiveServer
+@inject PhotographerService PhotographerService
+@inject NavigationManager Nav
+
+<PageTitle>Admin · Teenused</PageTitle>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Teenused</h1>
+    <a href="/admin/services/create" class="btn btn-primary">+ Lisa uus</a>
+</div>
+
+@if (services is null)
+{
+    <div class="spinner-border" role="status"></div>
+}
+else if (services.Count == 0)
+{
+    <p class="text-muted">Teenuseid pole. <a href="/admin/services/create">Lisa esimene.</a></p>
+}
+else
+{
+    <table class="table table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Nimi</th>
+                <th>Hind (€)</th>
+                <th>Kirjeldus</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var s in services)
+            {
+                <tr>
+                    <td>@s.Name</td>
+                    <td>@s.Price.ToString("0.00")</td>
+                    <td>@s.Description</td>
+                    <td class="text-end">
+                        <a href="/admin/services/edit/@s.Id" class="btn btn-sm btn-outline-primary me-1">Muuda</a>
+                        <a href="/admin/services/delete/@s.Id" class="btn btn-sm btn-outline-danger">Kustuta</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Service>? services;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var photographer = await PhotographerService.GetMainAsync();
+        if (photographer is not null)
+            services = await PhotographerService.ServicesForAsync(photographer.Id);
+        else
+            services = new();
+    }
+}

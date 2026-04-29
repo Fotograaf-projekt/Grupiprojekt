@@ -1,0 +1,62 @@
+@page "/admin/social-links/create"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@rendermode InteractiveServer
+@inject PhotographerService PhotographerService
+@inject NavigationManager Nav
+
+<PageTitle>Admin · Lisa sotsiaalmeedia link</PageTitle>
+
+<h1>Lisa sotsiaalmeedia link</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <EditForm Model="model" OnValidSubmit="Save">
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" />
+
+            <div class="mb-3">
+                <label class="form-label">Platvorm</label>
+                <InputText class="form-control" placeholder="nt Instagram" @bind-Value="model.Platform" />
+                <ValidationMessage For="() => model.Platform" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">URL</label>
+                <InputText class="form-control" placeholder="https://..." @bind-Value="model.Url" />
+                <ValidationMessage For="() => model.Url" />
+            </div>
+
+            @if (!string.IsNullOrEmpty(error))
+            {
+                <div class="alert alert-danger">@error</div>
+            }
+
+            <button type="submit" class="btn btn-primary me-2">Salvesta</button>
+            <a href="/admin/social-links" class="btn btn-outline-secondary">Tühista</a>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private SocialLink model = new();
+    private string? error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var photographer = await PhotographerService.GetMainAsync();
+        if (photographer is not null)
+            model.PhotographerId = photographer.Id;
+    }
+
+    private async Task Save()
+    {
+        try
+        {
+            await PhotographerService.AddSocialLinkAsync(model);
+            Nav.NavigateTo("/admin/social-links");
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+    }
+}

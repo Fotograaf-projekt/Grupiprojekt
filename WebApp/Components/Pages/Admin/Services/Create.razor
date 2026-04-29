@@ -1,0 +1,66 @@
+@page "/admin/services/create"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@rendermode InteractiveServer
+@inject PhotographerService PhotographerService
+@inject NavigationManager Nav
+
+<PageTitle>Admin · Lisa teenus</PageTitle>
+
+<h1>Lisa teenus</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <EditForm Model="model" OnValidSubmit="Save">
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" />
+
+            <div class="mb-3">
+                <label class="form-label">Nimi</label>
+                <InputText class="form-control" @bind-Value="model.Name" />
+                <ValidationMessage For="() => model.Name" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Hind (€)</label>
+                <InputNumber class="form-control" @bind-Value="model.Price" />
+                <ValidationMessage For="() => model.Price" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Kirjeldus</label>
+                <InputTextArea class="form-control" rows="4" @bind-Value="model.Description" />
+            </div>
+
+            @if (!string.IsNullOrEmpty(error))
+            {
+                <div class="alert alert-danger">@error</div>
+            }
+
+            <button type="submit" class="btn btn-primary me-2">Salvesta</button>
+            <a href="/admin/services" class="btn btn-outline-secondary">Tühista</a>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private Service model = new();
+    private string? error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var photographer = await PhotographerService.GetMainAsync();
+        if (photographer is not null)
+            model.PhotographerId = photographer.Id;
+    }
+
+    private async Task Save()
+    {
+        try
+        {
+            await PhotographerService.AddServiceAsync(model);
+            Nav.NavigateTo("/admin/services");
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+    }
+}

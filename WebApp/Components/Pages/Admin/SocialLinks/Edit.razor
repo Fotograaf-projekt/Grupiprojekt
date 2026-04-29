@@ -1,0 +1,71 @@
+@page "/admin/social-links/edit/{Id:int}"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@rendermode InteractiveServer
+@inject PhotographerService PhotographerService
+@inject NavigationManager Nav
+
+<PageTitle>Admin · Muuda linki</PageTitle>
+
+<h1>Muuda linki</h1>
+
+@if (model is null)
+{
+    <div class="spinner-border" role="status"></div>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-6">
+            <EditForm Model="model" OnValidSubmit="Save">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger" />
+
+                <div class="mb-3">
+                    <label class="form-label">Platvorm</label>
+                    <InputText class="form-control" @bind-Value="model.Platform" />
+                    <ValidationMessage For="() => model.Platform" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">URL</label>
+                    <InputText class="form-control" @bind-Value="model.Url" />
+                    <ValidationMessage For="() => model.Url" />
+                </div>
+
+                @if (!string.IsNullOrEmpty(error))
+                {
+                    <div class="alert alert-danger">@error</div>
+                }
+
+                <button type="submit" class="btn btn-primary me-2">Salvesta</button>
+                <a href="/admin/social-links" class="btn btn-outline-secondary">Tühista</a>
+            </EditForm>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private SocialLink? model;
+    private string? error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        model = await PhotographerService.FindSocialLinkAsync(Id);
+        if (model is null)
+            Nav.NavigateTo("/admin/social-links");
+    }
+
+    private async Task Save()
+    {
+        try
+        {
+            await PhotographerService.UpdateSocialLinkAsync(model!);
+            Nav.NavigateTo("/admin/social-links");
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+    }
+}
