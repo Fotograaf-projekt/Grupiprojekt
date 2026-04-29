@@ -1,0 +1,60 @@
+@page "/admin/photographer"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@rendermode InteractiveServer
+@inject PhotographerService PhotographerService
+
+<PageTitle>Admin · Profiil</PageTitle>
+
+<h1>Fotograafi profiil</h1>
+
+@if (model is null)
+{
+    <p>Laen…</p>
+}
+else
+{
+    <EditForm Model="model" OnValidSubmit="Save">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label class="form-label">Nimi</label>
+            <InputText class="form-control" @bind-Value="model.Name" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <InputText class="form-control" @bind-Value="model.Email" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Profiilipildi URL</label>
+            <InputText class="form-control" @bind-Value="model.ProfileImageUrl" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Minust</label>
+            <InputTextArea class="form-control" rows="6" @bind-Value="model.About" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Salvesta</button>
+        @if (saved)
+        {
+            <span class="text-success ms-3">Salvestatud!</span>
+        }
+    </EditForm>
+}
+
+@code {
+    private Photographer? model;
+    private bool saved;
+
+    protected override async Task OnInitializedAsync()
+    {
+        model = await PhotographerService.GetMainAsync();
+    }
+
+    private async Task Save()
+    {
+        if (model is null) return;
+        await PhotographerService.UpdateProfileAsync(model);
+        saved = true;
+    }
+}

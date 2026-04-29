@@ -1,0 +1,44 @@
+@page "/services"
+@inject PhotographerService PhotographerService
+
+<PageTitle>Teenused</PageTitle>
+
+<h1>Teenused</h1>
+
+@if (photographer is null)
+{
+    <p>Laen…</p>
+}
+else if (services.Count == 0)
+{
+    <p>Hetkel teenuseid pole.</p>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-2 g-3">
+        @foreach (var s in services)
+        {
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">@s.Name</h5>
+                        <h6 class="card-subtitle text-muted mb-2">@s.Price.ToString("0.00") €</h6>
+                        <p class="card-text">@s.Description</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private Photographer? photographer;
+    private List<Service> services = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        photographer = await PhotographerService.GetMainAsync();
+        if (photographer is not null)
+            services = await PhotographerService.ServicesForAsync(photographer.Id);
+    }
+}

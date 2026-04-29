@@ -1,0 +1,13 @@
+@if (Links is { Count: > 0 })
+{
+    <div class="social-links">
+        @foreach (var l in Links)
+        {
+            <a href="@l.Url" target="_blank" rel="noopener" class="me-2">@l.Platform</a>
+        }
+    </div>
+}
+
+@code {
+    [Parameter] public ICollection<SocialLink>? Links { get; set; }
+}

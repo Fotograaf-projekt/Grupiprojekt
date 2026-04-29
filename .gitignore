@@ -1,0 +1,35 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+.vscode/
+.idea/
+
+# Build outputs
+*.dll
+*.pdb
+*.exe
+
+# SQLite database
+*.db
+*.db-shm
+*.db-wal
+WebApp/Data/*.db
+WebApp/Data/*.db-*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# User secrets / appsettings overrides
+appsettings.Development.json
+appsettings.Local.json
+secrets.json
+
+# Plan files
+*.plan.md
