@@ -42,6 +42,7 @@ builder.Services.AddScoped<IPhotographerRepository, PhotographerRepository>();
 builder.Services.AddScoped<ISocialLinkRepository, SocialLinkRepository>();
 builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 builder.Services.AddScoped<PhotographerService>();
+builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 
 var app = builder.Build();
 

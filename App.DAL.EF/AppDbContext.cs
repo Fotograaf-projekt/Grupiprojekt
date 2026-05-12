@@ -10,6 +10,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
     public DbSet<Photographer> Photographers => Set<Photographer>();
     public DbSet<SocialLink> SocialLinks => Set<SocialLink>();
     public DbSet<Service> Services => Set<Service>();
+    public DbSet<Booking> Bookings => Set<Booking>();
+   
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -30,5 +32,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
             .WithMany(p => p.Services)
             .HasForeignKey(s => s.PhotographerId)
             .OnDelete(DeleteBehavior.Cascade);
+
+     
     }
 }
