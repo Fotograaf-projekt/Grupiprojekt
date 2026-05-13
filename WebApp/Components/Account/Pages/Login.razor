@@ -27,9 +27,17 @@
                     <label for="Input.Email" class="form-label">Email</label>
                     <ValidationMessage For="() => Input.Email" class="text-danger" />
                 </div>
-                <div class="form-floating mb-3">
+                <div class="form-floating mb-3" style="position:relative;">
                     <InputText type="password" @bind-Value="Input.Password" id="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
                     <label for="Input.Password" class="form-label">Password</label>
+                    <button type="button" onclick="
+                        var inp = document.getElementById('Input.Password');
+                        var btn = this;
+                        if (inp.type === 'password') { inp.type = 'text'; btn.textContent = 'Peida'; }
+                        else { inp.type = 'password'; btn.textContent = 'Kuva'; }"
+                        style="position:absolute;top:50%;right:0.75rem;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);padding:0;line-height:1;">
+                        Kuva
+                    </button>
                     <ValidationMessage For="() => Input.Password" class="text-danger" />
                 </div>
                 <div class="checkbox mb-3">
