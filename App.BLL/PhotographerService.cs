@@ -16,6 +16,8 @@ public class PhotographerService(
         await photographerRepo.SaveChangesAsync();
     }
 
+    public Task<SocialLink?> FindSocialLinkAsync(int id) => socialLinkRepo.FindAsync(id);
+
     public Task<List<SocialLink>> SocialLinksForAsync(int photographerId) =>
         socialLinkRepo.AllForPhotographerAsync(photographerId);
 
@@ -39,6 +41,8 @@ public class PhotographerService(
         await socialLinkRepo.SaveChangesAsync();
     }
 
+    public Task<Service?> FindServiceAsync(int id) => serviceRepo.FindAsync(id);
+
     public Task<List<Service>> ServicesForAsync(int photographerId) =>
         serviceRepo.AllForPhotographerAsync(photographerId);
 
@@ -61,3 +65,5 @@ public class PhotographerService(
         await serviceRepo.SaveChangesAsync();
     }
 }
+
+//lalalalalala
