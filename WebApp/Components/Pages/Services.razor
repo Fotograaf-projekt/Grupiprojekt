@@ -3,45 +3,58 @@
 
 <PageTitle>Teenused</PageTitle>
 
-<h1>Teenused</h1>
+<div class="services-wrap">
+    <div class="services-header">
+        <p class="eyebrow" style="font-size:0.7rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--muted);margin-bottom:0.5rem;">
+            Mida pakun
+        </p>
+        <h1>Teenused</h1>
+    </div>
 
-@if (photographer is null)
-{
-    <p>Laen…</p>
-}
-else if (services.Count == 0)
-{
-    <p>Hetkel teenuseid pole.</p>
-}
-else
-{
-    <div class="row row-cols-1 row-cols-md-2 g-3">
-        @foreach (var s in services)
-        {
-            <div class="col">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">@s.Name</h5>
-                        <h6 class="card-subtitle text-muted mb-2">@s.Price.ToString("0.00") €</h6>
-                        <p class="card-text">@s.Description</p>
-                        <button class="btn btn-primary">
-                         Broneeri
-                         </button>
+    @if (services is null)
+    {
+        <div class="text-center py-5"><div class="spinner-border" role="status"></div></div>
+    }
+    else if (services.Count == 0)
+    {
+        <p style="color:var(--muted)">Teenuseid pole hetkel lisatud.</p>
+    }
+    else
+    {
+        <div class="services-grid">
+            @foreach (var s in services)
+            {
+                <div class="service-item"
+                     style="background-image: url('https://picsum.photos/seed/srv@(s.Id + 10)/800/600?grayscale')">
+                    <div class="service-item-content">
+                        <span class="s-name">@s.Name</span>
+                        <span class="s-price">@s.Price.ToString("0") €</span>
+                        @if (!string.IsNullOrEmpty(s.Description))
+                        {
+                            <p style="font-size:0.78rem;color:rgba(255,255,255,0.65);margin-top:0.3rem;max-width:220px;line-height:1.5;">
+                                @s.Description
+                            </p>
+                        }
+                        <a href="/contact" class="btn btn-sm mt-2"
+                           style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:#fff;border:1px solid rgba(255,255,255,0.5);padding:0.3rem 0.8rem;">
+                            Broneeri
+                        </a>
                     </div>
                 </div>
-            </div>
-        }
-    </div>
-}
+            }
+        </div>
+    }
+</div>
 
 @code {
-    private Photographer? photographer;
-    private List<Service> services = new();
+    private List<Service>? services;
 
     protected override async Task OnInitializedAsync()
     {
-        photographer = await PhotographerService.GetMainAsync();
+        var photographer = await PhotographerService.GetMainAsync();
         if (photographer is not null)
             services = await PhotographerService.ServicesForAsync(photographer.Id);
+        else
+            services = new();
     }
 }
