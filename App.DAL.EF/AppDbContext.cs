@@ -11,7 +11,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
     public DbSet<SocialLink> SocialLinks => Set<SocialLink>();
     public DbSet<Service> Services => Set<Service>();
     public DbSet<Booking> Bookings => Set<Booking>();
-   
+    public DbSet<Print> Prints => Set<Print>();
+    public DbSet<PhotoTag> PhotoTags => Set<PhotoTag>();
+    public DbSet<Tag> Tags => Set<Tag>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -33,6 +35,5 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
             .HasForeignKey(s => s.PhotographerId)
             .OnDelete(DeleteBehavior.Cascade);
 
-     
     }
 }
