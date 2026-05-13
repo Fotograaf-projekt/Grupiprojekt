@@ -138,11 +138,53 @@ img { display: block; max-width: 100%; }
 
 /* ── Hero panel ──────────────────────────────────────────── */
 .hero-panel {
+    position: relative;
     width: 100%;
     height: calc(100vh - var(--nav-height));
     background-size: cover;
     background-position: center;
     background-color: #2a2a2a;
+    display: flex;
+    align-items: flex-end;
+}
+
+.hero-content {
+    padding: 3rem 2.5rem;
+    color: #fff;
+}
+
+.hero-eyebrow {
+    font-size: 0.7rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 0.5rem;
+}
+
+.hero-title {
+    font-family: var(--font-serif);
+    font-size: clamp(2.5rem, 7vw, 5rem);
+    font-weight: 300;
+    color: #fff;
+    margin-bottom: 1.5rem;
+    line-height: 1.1;
+}
+
+.hero-btn {
+    display: inline-block;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.6);
+    padding: 0.75rem 1.75rem;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+}
+
+.hero-btn:hover {
+    background: #fff;
+    color: var(--dark);
 }
 
 /* ── Gallery panels (Home) ───────────────────────────────── */

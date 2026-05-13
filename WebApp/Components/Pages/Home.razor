@@ -6,6 +6,11 @@
 @* Hero – täisekraani portreefoto *@
 <div class="hero-panel"
      style="background-image: url('https://picsum.photos/seed/photohero/1200/900?grayscale')">
+    <div class="hero-content">
+        <p class="hero-eyebrow">Fotograaf</p>
+        <h1 class="hero-title">@(photographer?.Name ?? "Fotograaf")</h1>
+        <a href="/services" class="hero-btn">Broneeri sessioon</a>
+    </div>
 </div>
 
 @* Teenuste galeriipaneel *@
