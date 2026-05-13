@@ -1,3 +1,4 @@
+using System.Drawing;
 using App.Domain;
 using App.Domain.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -11,7 +12,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
     public DbSet<SocialLink> SocialLinks => Set<SocialLink>();
     public DbSet<Service> Services => Set<Service>();
     public DbSet<Booking> Bookings => Set<Booking>();
-    public DbSet<Print> Prints => Set<Print>();
+    public DbSet<Print> Print => Set<Print>();
     public DbSet<PhotoTag> PhotoTags => Set<PhotoTag>();
     public DbSet<Tag> Tags => Set<Tag>();
 
@@ -33,6 +34,24 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
             .HasOne(s => s.Photographer)
             .WithMany(p => p.Services)
             .HasForeignKey(s => s.PhotographerId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Print>()
+            .HasOne(p => p.Photographer)
+            .WithMany(ph => ph.Print)
+            .HasForeignKey(p => p.PrintId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Tag>()
+            .HasOne(p => p.Photographer)
+            .WithMany(ph => ph.Tags)
+            .HasForeignKey(p => p.TagId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        builder.Entity<PhotoTag>()
+            .HasOne(pt => pt.Photographer)
+            .WithMany(p => p.PhotoTags)
+            .HasForeignKey(pt => pt.PhotoId)
             .OnDelete(DeleteBehavior.Cascade);
 
     }

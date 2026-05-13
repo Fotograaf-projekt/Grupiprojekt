@@ -17,4 +17,9 @@ public class Photographer : NamedEntity
 
     public ICollection<SocialLink>? SocialLinks { get; set; }
     public ICollection<Service>? Services { get; set; }
+    public ICollection<Print>? Print { get; set; }
+    public ICollection<Tag>? Tags { get; set; }
+    public ICollection<PhotoTag>? PhotoTags { get; set; }
 }
+
+

@@ -4,12 +4,10 @@ using Base.Domain;
 
 namespace App.Domain;
 
-public class Tag : BaseEntity
+public class Tag : NamedEntity
 {
-    [MaxLength(64)]
-    public string Name { get; set; } = default!;
-
     public int TagId { get; set; }
+    public Photographer? Photographer { get; set; }
 
     // [MaxLength(512)]
     // [Url]

@@ -4,8 +4,10 @@ using Base.Domain;
 
 namespace App.Domain;
 
-public class PhotoTag : BaseEntity
+public class PhotoTag : NamedEntity
 {
     public int PhotoId { get; set; }
     public int PhotoTagId { get; set; }
+    public Photographer? Photographer { get; set; }
+
 }
