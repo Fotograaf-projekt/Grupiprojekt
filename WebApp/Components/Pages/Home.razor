@@ -8,20 +8,23 @@
      style="background-image: url('https://picsum.photos/seed/photohero/1200/900?grayscale')">
 </div>
 
-@* Teenuste galeriipaneelid *@
-@if (services is not null)
-{
-    @foreach (var s in services)
-    {
-        <a href="/services" class="gallery-panel"
-           style="background-image: url('https://picsum.photos/seed/svc@(s.Id)/1200/750?grayscale'); display:block;">
-            <div class="gallery-panel-content">
-                <span class="panel-label">@s.Name</span>
-                <span class="panel-arrow">→</span>
-            </div>
-        </a>
-    }
-}
+@* Teenuste galeriipaneel *@
+<a href="/services" class="gallery-panel"
+   style="background-image: url('https://picsum.photos/seed/services/1200/750?grayscale'); display:block;">
+    <div class="gallery-panel-content">
+        <span class="panel-label">Teenused</span>
+        <span class="panel-arrow">→</span>
+    </div>
+</a>
+
+@* About galeriipaneel *@
+<a href="/about" class="gallery-panel"
+   style="background-image: url('https://picsum.photos/seed/aboutme/1200/750?grayscale'); display:block;">
+    <div class="gallery-panel-content">
+        <span class="panel-label">Minust</span>
+        <span class="panel-arrow">→</span>
+    </div>
+</a>
 
 @* CTA *@
 <div class="cta-section">
@@ -47,12 +50,9 @@
 
 @code {
     private Photographer? photographer;
-    private List<Service> services = new();
 
     protected override async Task OnInitializedAsync()
     {
         photographer = await PhotographerService.GetMainAsync();
-        if (photographer is not null)
-            services = await PhotographerService.ServicesForAsync(photographer.Id);
     }
 }
