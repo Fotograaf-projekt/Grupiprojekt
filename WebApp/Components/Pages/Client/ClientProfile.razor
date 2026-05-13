@@ -1,0 +1,63 @@
+
+@inject AppDbContext Db
+@rendermode InteractiveServer
+
+<PageTitle>Kliendi profiil</PageTitle>
+
+<h3>Kliendi profiil</h3>
+
+@if (client == null)
+{
+    <p>Klienti ei leitud.</p>
+}
+else
+{
+    <div class="client-card">
+        <p><strong>Nimi:</strong> @client.Name</p>
+        <p><strong>E-post:</strong> @client.Email</p>
+
+        <h4>Sõnumid (@client.ContactMessages!.Count)</h4>
+        @if (client.ContactMessages.Count == 0)
+        {
+            <p>Sõnumeid pole.</p>
+        }
+        else
+        {
+            <ul>
+                @foreach (var msg in client.ContactMessages)
+                {
+                    <li>@msg.Text</li>
+                }
+            </ul>
+        }
+
+        <h4>Broneeringud (@client.Bookings!.Count)</h4>
+        @if (client.Bookings.Count == 0)
+        {
+            <p>Broneeringuid pole.</p>
+        }
+        else
+        {
+            <ul>
+                @foreach (var b in client.Bookings)
+                {
+                    <li>@b.Date.ToString("dd.MM.yyyy") - @b.Status</li>
+                }
+            </ul>
+        }
+    </div>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private Client? client;
+
+    protected override void OnInitialized()
+    {
+        client = Db.Clients
+            .Include(c => c.ContactMessages)
+            .Include(c => c.Bookings)
+            .FirstOrDefault(c => c.Id == Id);
+    }
+}

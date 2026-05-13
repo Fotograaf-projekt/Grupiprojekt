@@ -1,0 +1,152 @@
+@page "/availability"
+
+@using Grupiprojekt.Models
+@inject AppDbContext Db
+@rendermode InteractiveServer
+
+<PageTitle>Vabad ajad</PageTitle>
+
+<h3>Vabade aegade kalender</h3>
+
+<div class="calendar-controls">
+    <button class="btn btn-secondary" @onclick="PreviousMonth">← Eelmine</button>
+    <span><strong>@currentMonth.ToString("MMMM yyyy")</strong></span>
+    <button class="btn btn-secondary" @onclick="NextMonth">Järgmine →</button>
+</div>
+
+<table class="calendar">
+    <thead>
+        <tr>
+            <th>E</th><th>T</th><th>K</th><th>N</th><th>R</th><th>L</th><th>P</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var week in GetWeeks())
+        {
+            <tr>
+                @foreach (var day in week)
+                {
+                    <td class="@GetDayClass(day)">
+                        @if (day.HasValue)
+                        {
+                            <span>@day.Value.Day</span>
+                            @if (IsFree(day.Value))
+                            {
+                                <small>✓</small>
+                            }
+                        }
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h4>Lisa uus vaba aeg</h4>
+<div class="add-availability">
+    <input type="date" @bind="newDate" />
+    <input type="text" @bind="newStart" placeholder="nt 09:00" />
+    <input type="text" @bind="newEnd" placeholder="nt 17:00" />
+    <button class="btn btn-primary" @onclick="AddAvailability">Lisa</button>
+</div>
+
+@code {
+    private DateTime currentMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+    private List<Availability> availabilities = new();
+
+    private DateTime newDate = DateTime.Today;
+    private string newStart = "09:00";
+    private string newEnd = "17:00";
+
+    protected override void OnInitialized()
+    {
+        LoadAvailabilities();
+    }
+
+    private void LoadAvailabilities()
+    {
+        availabilities = Db.Availabilities.ToList();
+    }
+
+    private bool IsFree(DateTime date)
+    {
+        return availabilities.Any(a => a.Date.Date == date.Date && a.IsFree);
+    }
+
+    private string GetDayClass(DateTime? day)
+    {
+        if (!day.HasValue) return "empty";
+        if (day.Value.Date == DateTime.Today) return "today";
+        if (IsFree(day.Value)) return "available";
+        return "";
+    }
+
+    private void PreviousMonth()
+    {
+        currentMonth = currentMonth.AddMonths(-1);
+    }
+
+    private void NextMonth()
+    {
+        currentMonth = currentMonth.AddMonths(1);
+    }
+
+    private void AddAvailability()
+    {
+        var availability = new Availability
+        {
+            Date = newDate,
+            StartTime = newStart,
+            EndTime = newEnd,
+            IsFree = true
+        };
+
+        Db.Availabilities.Add(availability);
+        Db.SaveChanges();
+
+        LoadAvailabilities();
+    }
+
+    // Tagastab kalendri nädalad (igas nädalas 7 päeva, tühjad päevad on null)
+    private List<List<DateTime?>> GetWeeks()
+    {
+        var weeks = new List<List<DateTime?>>();
+        var firstDay = currentMonth;
+        var daysInMonth = DateTime.DaysInMonth(currentMonth.Year, currentMonth.Month);
+
+        // Esmaspäev = 0, Pühapäev = 6
+        int startOffset = ((int)firstDay.DayOfWeek + 6) % 7;
+
+        var currentWeek = new List<DateTime?>();
+
+        // Tühjad päevad nädala alguses
+        for (int i = 0; i < startOffset; i++)
+        {
+            currentWeek.Add(null);
+        }
+
+        for (int day = 1; day <= daysInMonth; day++)
+        {
+            currentWeek.Add(new DateTime(currentMonth.Year, currentMonth.Month, day));
+
+            if (currentWeek.Count == 7)
+            {
+                weeks.Add(currentWeek);
+                currentWeek = new List<DateTime?>();
+            }
+        }
+
+        // Täida viimane nädal lõpuni
+        while (currentWeek.Count > 0 && currentWeek.Count < 7)
+        {
+            currentWeek.Add(null);
+        }
+
+        if (currentWeek.Count > 0)
+        {
+            weeks.Add(currentWeek);
+        }
+
+        return weeks;
+    }
+}
