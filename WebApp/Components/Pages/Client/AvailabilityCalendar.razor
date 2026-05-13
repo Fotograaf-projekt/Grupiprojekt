@@ -86,6 +86,7 @@
     private async Task LoadBookings()
     {
         bookings = await Db.Bookings
+            .Include(b => b.Service)  // lisa see, et teenus tuleks ka kaasa
             .Where(b => b.Date.Date == selectedDate.Date)
             .ToListAsync();
     }
@@ -94,9 +95,11 @@
         var slotEnd = slot.Add(TimeSpan.FromHours(2));
         return bookings.Any(b =>
         {
+            var duration = b.Service?.DurationHours ?? 2;
+            // Pulm (24h või rohkem) blokeerib terve päeva
+            if (duration >= 24) return true;
             var bookingStart = b.Date.TimeOfDay;
-            var bookingEnd = bookingStart.Add(TimeSpan.FromHours(2));
-            // Kattumine: broneering algab enne lahtri lõppu JA lõpeb pärast lahtri algust
+            var bookingEnd = bookingStart.Add(TimeSpan.FromHours(duration));
             return bookingStart < slotEnd && bookingEnd > slot;
         });
     }

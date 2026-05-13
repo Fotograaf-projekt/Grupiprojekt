@@ -14,4 +14,6 @@ public class Service : NamedEntity
 
     public int PhotographerId { get; set; }
     public Photographer? Photographer { get; set; }
+
+    public int DurationHours { get; set; } = 2;
 }
