@@ -1,0 +1,44 @@
+﻿@page "/albums"
+@inject AlbumService AlbumService
+@inject PhotographerService PhotographerService
+
+<PageTitle>Albumid</PageTitle>
+<h1>Albumid</h1>
+
+@if (photographer is null)
+{
+    <p>Laen…</p>
+}
+else if (albums.Count == 0)
+{
+    <p>Hetkel albumeid pole.</p>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-2 g-3">
+        @foreach (var a in albums)
+        {
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">@a.Title</h5>
+                        <p class="card-text">@a.Description</p>
+                        <a href="/photos/@a.Id" class="btn btn-primary">Vaata fotosid</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private Photographer? photographer;
+    private List<Album> albums = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        photographer = await PhotographerService.GetMainAsync();
+        if (photographer is not null)
+            albums = await AlbumService.AlbumsForAsync(photographer.Id);
+    }
+}

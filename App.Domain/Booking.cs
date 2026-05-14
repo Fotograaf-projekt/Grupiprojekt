@@ -13,5 +13,7 @@ public class Booking : BaseEntity
 
     [Column(TypeName = "decimal(10,2)")]
     public decimal Total { get; set; }
+    public int ServiceId { get; set; }
+    public Service? Service { get; set; }
 }
 

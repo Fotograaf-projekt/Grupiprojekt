@@ -1,0 +1,66 @@
+﻿@page "/admin/categories"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@rendermode InteractiveServer
+@inject AlbumService AlbumService
+
+<PageTitle>Admin · Kategooriad</PageTitle>
+<h1>Kategooriad</h1>
+
+<table class="table">
+    <thead><tr><th>Nimi</th><th>Kirjeldus</th><th></th></tr></thead>
+    <tbody>
+        @foreach (var c in categories)
+        {
+            <tr>
+                <td><InputText class="form-control form-control-sm" @bind-Value="c.Name" /></td>
+                <td><InputText class="form-control form-control-sm" @bind-Value="c.Description" /></td>
+                <td>
+                    <button class="btn btn-sm btn-danger" @onclick="() => Delete(c.Id)">Kustuta</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h3 class="mt-4">Lisa uus kategooria</h3>
+<EditForm Model="newCategory" OnValidSubmit="Add">
+    <DataAnnotationsValidator />
+    <div class="row g-2">
+        <div class="col-md-4"><InputText class="form-control" placeholder="Nimi" @bind-Value="newCategory.Name" /></div>
+        <div class="col-md-6"><InputText class="form-control" placeholder="Kirjeldus" @bind-Value="newCategory.Description" /></div>
+        <div class="col-md-2"><button type="submit" class="btn btn-primary w-100">Lisa</button></div>
+    </div>
+</EditForm>
+
+@if (!string.IsNullOrEmpty(error)) { <div class="alert alert-danger mt-3">@error</div> }
+
+@code {
+    private List<Category> categories = new();
+    private Category newCategory = new();
+    private string? error;
+
+    protected override async Task OnInitializedAsync() => await Reload();
+
+    private async Task Reload()
+    {
+        categories = await AlbumService.AllCategoriesAsync();
+    }
+
+    private async Task Add()
+    {
+        try
+        {
+            await AlbumService.AddCategoryAsync(newCategory);
+            newCategory = new();
+            error = null;
+            await Reload();
+        }
+        catch (Exception ex) { error = ex.Message; }
+    }
+
+    private async Task Delete(int id)
+    {
+        await AlbumService.RemoveCategoryAsync(id);
+        await Reload();
+    }
+}

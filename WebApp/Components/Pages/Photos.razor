@@ -1,0 +1,44 @@
+﻿@page "/photos/{AlbumId:int}"
+@inject AlbumService AlbumService
+
+<PageTitle>Fotod</PageTitle>
+
+@if (album is null)
+{
+    <p>Laen…</p>
+}
+else
+{
+    <h1>@album.Title</h1>
+    @if (!(album.Photos?.Any() ?? false))
+    {
+        <p>Albumis pole fotosid.</p>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-3 g-3">
+            @foreach (var p in album.Photos!)
+            {
+                <div class="col">
+                    <div class="card h-100">
+                        <img src="@p.ImageUrl" class="card-img-top" alt="@p.Title" />
+                        <div class="card-body">
+                            <h5 class="card-title">@p.Title</h5>
+                            <p class="card-text">@p.Description</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+}
+
+@code {
+    [Parameter] public int AlbumId { get; set; }
+    private Album? album;
+
+    protected override async Task OnInitializedAsync()
+    {
+        album = await AlbumService.GetAlbumWithPhotosAsync(AlbumId);
+    }
+}

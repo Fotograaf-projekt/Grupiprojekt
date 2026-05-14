@@ -1,6 +1,12 @@
 ﻿@page "/booking"
 @rendermode InteractiveServer
+<<<<<<< HEAD
 @inject NavigationManager Navigation
+=======
+
+@using Microsoft.AspNetCore.Components.Forms
+
+>>>>>>> main
 
 <PageTitle>Booking</PageTitle>
 
@@ -10,6 +16,7 @@
     <DataAnnotationsValidator />
 
     <div class="mb-3">
+<<<<<<< HEAD
         <label>Name</label>
         <InputText class="form-control" @bind-Value="clientName" />
     </div>
@@ -36,6 +43,24 @@
 
     <button class="btn btn-primary" type="submit">
         Broneeri
+=======
+        <label>Date</label>
+        <InputDate @bind-Value="booking.Date" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Status</label>
+        <InputText @bind-Value="booking.Status" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Total</label>
+        <InputNumber @bind-Value="booking.Total" class="form-control" />
+    </div>
+
+    <button class="btn btn-primary" type="submit">
+        Book Now
+>>>>>>> main
     </button>
 </EditForm>
 
@@ -52,6 +77,7 @@
         Total = 0
     };
 
+<<<<<<< HEAD
     private string? clientName;
     private string? clientEmail;
     private string? time;
@@ -67,4 +93,12 @@
 
     Navigation.NavigateTo("/");
 }
+=======
+    private bool saved;
+
+    private void Book()
+    {
+        saved = true;
+    }
+>>>>>>> main
 }

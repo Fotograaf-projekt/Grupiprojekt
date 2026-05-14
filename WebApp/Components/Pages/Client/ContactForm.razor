@@ -1,0 +1,118 @@
+@page "/contact"
+@using global::App.DAL.EF
+@using Microsoft.EntityFrameworkCore
+@inject AppDbContext Db
+@rendermode InteractiveServer
+
+<PageTitle>Võta ühendust</PageTitle>
+
+<h3>Võta meiega ühendust</h3>
+
+@if (sent)
+{
+    <p style="color: green;">Aitäh! Sinu sõnum on saadetud.</p>
+    <button @onclick="Reset">Saada uus sõnum</button>
+}
+else
+{
+    <div class="contact-form">
+        <div class="mb-2">
+            <label>Nimi:</label>
+            <input class="form-control" @bind="name" />
+        </div>
+
+        <div class="mb-2">
+            <label>E-post:</label>
+            <input class="form-control" @bind="email" type="email" />
+        </div>
+
+        <div class="mb-2">
+            <label>Teenus:</label>
+            <select class="form-control" @bind="serviceId">
+                <option value="0">-- Vali teenus --</option>
+                @foreach (var s in services)
+                {
+                    <option value="@s.Id">@s.Name</option>
+                }
+            </select>
+        </div>
+
+        <div class="mb-2">
+            <label>Sõnum:</label>
+            <textarea class="form-control" @bind="text" rows="5"></textarea>
+        </div>
+
+        @if (!string.IsNullOrEmpty(error))
+        {
+            <p style="color: red;">@error</p>
+        }
+
+        <button class="btn btn-primary" @onclick="SendMessage">Saada</button>
+    </div>
+}
+
+@code {
+    private string name = "";
+    private string email = "";
+    private string text = "";
+    private int serviceId = 0;
+
+    private List<Service> services = new();
+    private bool sent = false;
+    private string error = "";
+
+    protected override void OnInitialized()
+    {
+        services = Db.Services.ToList();
+    }
+
+    private void SendMessage()
+    {
+        if (string.IsNullOrWhiteSpace(name) ||
+            string.IsNullOrWhiteSpace(email) ||
+            string.IsNullOrWhiteSpace(text) ||
+            serviceId == 0)
+        {
+            error = "Palun täida kõik väljad ja vali teenus.";
+            return;
+        }
+
+        // Otsime, kas klient on juba olemas (e-posti järgi)
+        var client = Db.Clients.FirstOrDefault(c => c.Email == email);
+
+        if (client == null)
+        {
+            client = new Client
+            {
+                Name = name,
+                Email = email
+            };
+            Db.Clients.Add(client);
+            Db.SaveChanges();
+        }
+
+        var message = new ContactMessage
+        {
+            Name = name,
+            Email = email,
+            Text = text,
+            ClientId = client.Id,
+            ServiceId = serviceId
+        };
+
+        Db.ContactMessages.Add(message);
+        Db.SaveChanges();
+
+        sent = true;
+        error = "";
+    }
+
+    private void Reset()
+    {
+        name = "";
+        email = "";
+        text = "";
+        serviceId = 0;
+        sent = false;
+    }
+}

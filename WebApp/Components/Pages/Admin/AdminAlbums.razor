@@ -1,0 +1,86 @@
+﻿@page "/admin/albums"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@rendermode InteractiveServer
+@inject AlbumService AlbumService
+@inject PhotographerService PhotographerService
+
+<PageTitle>Admin · Albumid</PageTitle>
+<h1>Albumid</h1>
+
+@if (photographer is null)
+{
+    <p>Laen…</p>
+}
+else
+{
+    <table class="table">
+        <thead><tr><th>Pealkiri</th><th>Kirjeldus</th><th>Avalik</th><th></th></tr></thead>
+        <tbody>
+            @foreach (var a in albums)
+            {
+                <tr>
+                    <td><InputText class="form-control form-control-sm" @bind-Value="a.Title" /></td>
+                    <td><InputText class="form-control form-control-sm" @bind-Value="a.Description" /></td>
+                    <td><InputCheckbox @bind-Value="a.IsPublic" /></td>
+                    <td>
+                        <button class="btn btn-sm btn-success" @onclick="() => UpdateRow(a)">Salvesta</button>
+                        <button class="btn btn-sm btn-danger" @onclick="() => Delete(a.Id)">Kustuta</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h3 class="mt-4">Lisa uus album</h3>
+    <EditForm Model="newAlbum" OnValidSubmit="Add">
+        <DataAnnotationsValidator />
+        <div class="row g-2">
+            <div class="col-md-4"><InputText class="form-control" placeholder="Pealkiri" @bind-Value="newAlbum.Title" /></div>
+            <div class="col-md-6"><InputText class="form-control" placeholder="Kirjeldus" @bind-Value="newAlbum.Description" /></div>
+            <div class="col-md-2"><button type="submit" class="btn btn-primary w-100">Lisa</button></div>
+        </div>
+    </EditForm>
+
+    @if (!string.IsNullOrEmpty(error)) { <div class="alert alert-danger mt-3">@error</div> }
+}
+
+@code {
+    private Photographer? photographer;
+    private List<Album> albums = new();
+    private Album newAlbum = new();
+    private string? error;
+
+    protected override async Task OnInitializedAsync() => await Reload();
+
+    private async Task Reload()
+    {
+        photographer = await PhotographerService.GetMainAsync();
+        if (photographer is not null)
+            albums = await AlbumService.AlbumsForAsync(photographer.Id);
+    }
+
+    private async Task Add()
+    {
+        if (photographer is null) return;
+        try
+        {
+            newAlbum.PhotographerId = photographer.Id;
+            await AlbumService.AddAlbumAsync(newAlbum);
+            newAlbum = new();
+            error = null;
+            await Reload();
+        }
+        catch (Exception ex) { error = ex.Message; }
+    }
+
+    private async Task UpdateRow(Album a)
+    {
+        await AlbumService.UpdateAlbumAsync(a);
+    }
+
+    private async Task Delete(int id)
+    {
+        await AlbumService.RemoveAlbumAsync(id);
+        await Reload();
+    }
+}
