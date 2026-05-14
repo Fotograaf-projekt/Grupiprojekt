@@ -7,22 +7,27 @@
 
 @if (photographer is null)
 {
-    <p>Laen…</p>
+    <p class="loading-text">Laen…</p>
 }
 else if (albums.Count == 0)
 {
-    <p>Hetkel albumeid pole.</p>
+    <p class="empty-text">Hetkel albumeid pole.</p>
 }
 else
 {
-    <div class="row row-cols-1 row-cols-md-2 g-3">
+    <div class="row row-cols-1 row-cols-md-2 g-4">
         @foreach (var a in albums)
         {
             <div class="col">
                 <div class="card h-100">
+                    @if (a.Photos != null && a.Photos.Any())
+                    {
+                        <div class="card-img-wrapper">
+                            <img src="@a.Photos.First().ImageUrl" class="card-img-top" alt="@a.Title" />
+                        </div>
+                    }
                     <div class="card-body">
                         <h5 class="card-title">@a.Title</h5>
-                        <p class="card-text">@a.Description</p>
                         <a href="/photos/@a.Id" class="btn btn-primary">Vaata fotosid</a>
                     </div>
                 </div>
@@ -42,3 +47,87 @@ else
             albums = await AlbumService.AlbumsForAsync(photographer.Id);
     }
 }
+
+<style>
+    h1 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 3.5rem;
+        font-weight: 300;
+        color: #141311;
+        margin-top: 2rem;
+        margin-bottom: 2.5rem;
+        letter-spacing: -1px;
+    }
+
+    .loading-text, .empty-text {
+        font-family: 'Inter', sans-serif;
+        color: #8c8275;
+        font-weight: 300;
+        font-style: italic;
+    }
+
+    .card {
+        background-color: #faf7f2 !important;
+        border: 1px solid rgba(197, 168, 128, 0.25) !important; 
+        border-radius: 0px !important; 
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.01) !important;
+        transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        overflow: hidden;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(197, 168, 128, 0.6) !important;
+        box-shadow: 0 20px 40px rgba(197, 168, 128, 0.1) !important;
+    }
+
+    .card-img-wrapper {
+        height: 240px;
+        overflow: hidden;
+    }
+
+    .card-img-top {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        transition: transform 0.6s ease;
+    }
+
+    .card:hover .card-img-top {
+        transform: scale(1.03); 
+    }
+
+    .card-body {
+        padding: 1.8rem !important;
+        background: #ffffff;
+    }
+
+    .card-title {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.6rem;
+        font-weight: 400;
+        color: #141311;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #c5a880 0%, #a88d63 100%) !important;
+        border: none !important;
+        border-radius: 0px !important;
+        color: #ffffff !important;
+        padding: 0.7rem 2rem !important;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        font-weight: 400;
+        box-shadow: 0 4px 15px rgba(197, 168, 128, 0.2);
+        transition: all 0.4s ease !important;
+        display: inline-block;
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #2c2a27 0%, #141311 100%) !important;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+        letter-spacing: 2px;
+    }
+</style>

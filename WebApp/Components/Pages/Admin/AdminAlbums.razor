@@ -14,13 +14,21 @@
 else
 {
     <table class="table">
-        <thead><tr><th>Pealkiri</th><th>Kirjeldus</th><th>Avalik</th><th></th></tr></thead>
+        <thead><tr><th>Pealkiri</th><th>Kategooria</th><th>Avalik</th><th></th></tr></thead>
         <tbody>
             @foreach (var a in albums)
             {
                 <tr>
                     <td><InputText class="form-control form-control-sm" @bind-Value="a.Title" /></td>
-                    <td><InputText class="form-control form-control-sm" @bind-Value="a.Description" /></td>
+                    <td>
+                        <InputSelect class="form-select form-select-sm" @bind-Value="a.CategoryId">
+                            <option value="">-- Kategooria --</option>
+                            @foreach (var c in categories)
+                            {
+                                <option value="@c.Id">@c.Name</option>
+                            }
+                        </InputSelect>
+                    </td>
                     <td><InputCheckbox @bind-Value="a.IsPublic" /></td>
                     <td>
                         <button class="btn btn-sm btn-success" @onclick="() => UpdateRow(a)">Salvesta</button>
@@ -35,9 +43,21 @@ else
     <EditForm Model="newAlbum" OnValidSubmit="Add">
         <DataAnnotationsValidator />
         <div class="row g-2">
-            <div class="col-md-4"><InputText class="form-control" placeholder="Pealkiri" @bind-Value="newAlbum.Title" /></div>
-            <div class="col-md-6"><InputText class="form-control" placeholder="Kirjeldus" @bind-Value="newAlbum.Description" /></div>
-            <div class="col-md-2"><button type="submit" class="btn btn-primary w-100">Lisa</button></div>
+            <div class="col-md-5">
+                <InputText class="form-control" placeholder="Pealkiri" @bind-Value="newAlbum.Title" />
+            </div>
+            <div class="col-md-5">
+                <InputSelect class="form-select" @bind-Value="newAlbum.CategoryId">
+                    <option value="">-- Vali kategooria --</option>
+                    @foreach (var c in categories)
+                    {
+                        <option value="@c.Id">@c.Name</option>
+                    }
+                </InputSelect>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">Lisa</button>
+            </div>
         </div>
     </EditForm>
 
@@ -47,6 +67,7 @@ else
 @code {
     private Photographer? photographer;
     private List<Album> albums = new();
+    private List<Category> categories = new();
     private Album newAlbum = new();
     private string? error;
 
@@ -57,6 +78,7 @@ else
         photographer = await PhotographerService.GetMainAsync();
         if (photographer is not null)
             albums = await AlbumService.AlbumsForAsync(photographer.Id);
+        categories = await AlbumService.AllCategoriesAsync();
     }
 
     private async Task Add()
