@@ -13,13 +13,12 @@
 else
 {
     <table class="table">
-        <thead><tr><th>Pealkiri</th><th>Kirjeldus</th><th>URL</th><th>Album</th><th></th></tr></thead>
+        <thead><tr><th>Pealkiri</th><th>URL</th><th>Album</th><th></th></tr></thead>
         <tbody>
             @foreach (var p in photos)
             {
                 <tr>
                     <td><InputText class="form-control form-control-sm" @bind-Value="p.Title" /></td>
-                    <td><InputText class="form-control form-control-sm" @bind-Value="p.Description" /></td>
                     <td><InputText class="form-control form-control-sm" @bind-Value="p.ImageUrl" /></td>
                     <td>@albums.FirstOrDefault(a => a.Id == p.AlbumId)?.Title</td>
                     <td>
@@ -35,9 +34,9 @@ else
     <EditForm Model="newPhoto" OnValidSubmit="Add">
         <DataAnnotationsValidator />
         <div class="row g-2">
-            <div class="col-md-3"><InputText class="form-control" placeholder="Pealkiri" @bind-Value="newPhoto.Title" /></div>
-            <div class="col-md-3"><InputText class="form-control" placeholder="Pildi URL" @bind-Value="newPhoto.ImageUrl" /></div>
-            <div class="col-md-3"><InputText class="form-control" placeholder="Kirjeldus" @bind-Value="newPhoto.Description" /></div>
+            <div class="col-md-3">
+                <InputText class="form-control" placeholder="Pealkiri" @bind-Value="newPhoto.Title" />
+            </div>
             <div class="col-md-2">
                 <InputSelect class="form-select" @bind-Value="newPhoto.AlbumId">
                     <option value="0">-- Vali album --</option>
@@ -47,7 +46,12 @@ else
                     }
                 </InputSelect>
             </div>
-            <div class="col-md-1"><button type="submit" class="btn btn-primary w-100">Lisa</button></div>
+            <div class="col-md-6">
+                <InputText class="form-control" placeholder="Pildi URL" @bind-Value="newPhoto.ImageUrl" />
+            </div>
+            <div class="col-md-1">
+                <button type="submit" class="btn btn-primary w-100">Lisa</button>
+            </div>
         </div>
     </EditForm>
 

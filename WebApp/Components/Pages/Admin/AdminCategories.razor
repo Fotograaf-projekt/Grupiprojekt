@@ -7,13 +7,12 @@
 <h1>Kategooriad</h1>
 
 <table class="table">
-    <thead><tr><th>Nimi</th><th>Kirjeldus</th><th></th></tr></thead>
+    <thead><tr><th>Nimi</th><th></th></tr></thead>
     <tbody>
         @foreach (var c in categories)
         {
             <tr>
                 <td><InputText class="form-control form-control-sm" @bind-Value="c.Name" /></td>
-                <td><InputText class="form-control form-control-sm" @bind-Value="c.Description" /></td>
                 <td>
                     <button class="btn btn-sm btn-danger" @onclick="() => Delete(c.Id)">Kustuta</button>
                 </td>
@@ -26,9 +25,12 @@
 <EditForm Model="newCategory" OnValidSubmit="Add">
     <DataAnnotationsValidator />
     <div class="row g-2">
-        <div class="col-md-4"><InputText class="form-control" placeholder="Nimi" @bind-Value="newCategory.Name" /></div>
-        <div class="col-md-6"><InputText class="form-control" placeholder="Kirjeldus" @bind-Value="newCategory.Description" /></div>
-        <div class="col-md-2"><button type="submit" class="btn btn-primary w-100">Lisa</button></div>
+        <div class="col-md-10">
+            <InputText class="form-control" placeholder="Nimi" @bind-Value="newCategory.Name" />
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Lisa</button>
+        </div>
     </div>
 </EditForm>
 
