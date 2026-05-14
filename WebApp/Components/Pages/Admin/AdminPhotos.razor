@@ -1,0 +1,100 @@
+﻿@page "/admin/photos"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@rendermode InteractiveServer
+@inject AlbumService AlbumService
+
+<PageTitle>Admin · Fotod</PageTitle>
+<h1>Fotod</h1>
+
+@if (albums.Count == 0)
+{
+    <p>Laen…</p>
+}
+else
+{
+    <table class="table">
+        <thead><tr><th>Pealkiri</th><th>Kirjeldus</th><th>URL</th><th>Album</th><th></th></tr></thead>
+        <tbody>
+            @foreach (var p in photos)
+            {
+                <tr>
+                    <td><InputText class="form-control form-control-sm" @bind-Value="p.Title" /></td>
+                    <td><InputText class="form-control form-control-sm" @bind-Value="p.Description" /></td>
+                    <td><InputText class="form-control form-control-sm" @bind-Value="p.ImageUrl" /></td>
+                    <td>@albums.FirstOrDefault(a => a.Id == p.AlbumId)?.Title</td>
+                    <td>
+                        <button class="btn btn-sm btn-success" @onclick="() => UpdateRow(p)">Salvesta</button>
+                        <button class="btn btn-sm btn-danger" @onclick="() => Delete(p.Id)">Kustuta</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h3 class="mt-4">Lisa uus foto</h3>
+    <EditForm Model="newPhoto" OnValidSubmit="Add">
+        <DataAnnotationsValidator />
+        <div class="row g-2">
+            <div class="col-md-3"><InputText class="form-control" placeholder="Pealkiri" @bind-Value="newPhoto.Title" /></div>
+            <div class="col-md-3"><InputText class="form-control" placeholder="Pildi URL" @bind-Value="newPhoto.ImageUrl" /></div>
+            <div class="col-md-3"><InputText class="form-control" placeholder="Kirjeldus" @bind-Value="newPhoto.Description" /></div>
+            <div class="col-md-2">
+                <InputSelect class="form-select" @bind-Value="newPhoto.AlbumId">
+                    <option value="0">-- Vali album --</option>
+                    @foreach (var a in albums)
+                    {
+                        <option value="@a.Id">@a.Title</option>
+                    }
+                </InputSelect>
+            </div>
+            <div class="col-md-1"><button type="submit" class="btn btn-primary w-100">Lisa</button></div>
+        </div>
+    </EditForm>
+
+    @if (!string.IsNullOrEmpty(error)) { <div class="alert alert-danger mt-3">@error</div> }
+}
+
+@code {
+    private List<Photo> photos = new();
+    private List<Album> albums = new();
+    private Photo newPhoto = new();
+    private string? error;
+
+    protected override async Task OnInitializedAsync() => await Reload();
+
+    private async Task Reload()
+    {
+        albums = await AlbumService.AllAlbumsAsync();
+        photos = new();
+        foreach (var a in albums)
+        {
+            var p = await AlbumService.PhotosForAlbumAsync(a.Id);
+            photos.AddRange(p);
+        }
+    }
+
+    private async Task Add()
+    {
+        if (newPhoto.AlbumId == 0) { error = "Vali album!"; return; }
+        try
+        {
+            newPhoto.TakenAt = DateTime.UtcNow;
+            await AlbumService.AddPhotoAsync(newPhoto);
+            newPhoto = new();
+            error = null;
+            await Reload();
+        }
+        catch (Exception ex) { error = ex.Message; }
+    }
+
+    private async Task UpdateRow(Photo p)
+    {
+        await AlbumService.UpdatePhotoAsync(p);
+    }
+
+    private async Task Delete(int id)
+    {
+        await AlbumService.RemovePhotoAsync(id);
+        await Reload();
+    }
+}

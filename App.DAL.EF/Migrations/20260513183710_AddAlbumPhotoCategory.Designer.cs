@@ -3,6 +3,7 @@ using System;
 using App.DAL.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,15 +11,16 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace App.DAL.EF.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260513183710_AddAlbumPhotoCategory")]
+    partial class AddAlbumPhotoCategory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.8");
 
             modelBuilder.Entity("App.Domain.Album", b =>
-            modelBuilder.Entity("App.Domain.Availability", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -53,72 +55,12 @@ namespace App.DAL.EF.Migrations
                 });
 
             modelBuilder.Entity("App.Domain.Category", b =>
-                    b.Property<int?>("BookingId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("EndTime")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsFree")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("StartTime")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BookingId")
-                        .IsUnique();
-
-                    b.ToTable("Availabilities");
-                });
-
-            modelBuilder.Entity("App.Domain.Booking", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("ClientId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("ServiceId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("Total")
-                        .HasColumnType("decimal(10,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClientId");
-
-                    b.HasIndex("ServiceId");
-
-                    b.ToTable("Bookings");
-                });
-
-            modelBuilder.Entity("App.Domain.Client", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Description")
-                    b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
@@ -128,40 +70,6 @@ namespace App.DAL.EF.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
-                    b.ToTable("Clients");
-                });
-
-            modelBuilder.Entity("App.Domain.ContactMessage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ClientId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("ServiceId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Text")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClientId");
-
-                    b.HasIndex("ServiceId");
-
-                    b.ToTable("ContactMessages");
                 });
 
             modelBuilder.Entity("App.Domain.Identity.ApplicationUser", b =>
@@ -307,9 +215,6 @@ namespace App.DAL.EF.Migrations
                     b.Property<string>("Description")
                         .HasMaxLength(2000)
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("DurationHours")
-                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -517,49 +422,6 @@ namespace App.DAL.EF.Migrations
                     b.Navigation("Album");
 
                     b.Navigation("Category");
-            modelBuilder.Entity("App.Domain.Availability", b =>
-                {
-                    b.HasOne("App.Domain.Booking", "Booking")
-                        .WithOne()
-                        .HasForeignKey("App.Domain.Availability", "BookingId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Booking");
-                });
-
-            modelBuilder.Entity("App.Domain.Booking", b =>
-                {
-                    b.HasOne("App.Domain.Client", null)
-                        .WithMany("Bookings")
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("App.Domain.Service", "Service")
-                        .WithMany()
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Service");
-                });
-
-            modelBuilder.Entity("App.Domain.ContactMessage", b =>
-                {
-                    b.HasOne("App.Domain.Client", "Client")
-                        .WithMany("ContactMessages")
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("App.Domain.Service", "Service")
-                        .WithMany()
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Client");
-
-                    b.Navigation("Service");
                 });
 
             modelBuilder.Entity("App.Domain.Service", b =>
@@ -645,11 +507,6 @@ namespace App.DAL.EF.Migrations
                     b.Navigation("Albums");
 
                     b.Navigation("Photos");
-            modelBuilder.Entity("App.Domain.Client", b =>
-                {
-                    b.Navigation("Bookings");
-
-                    b.Navigation("ContactMessages");
                 });
 
             modelBuilder.Entity("App.Domain.Photographer", b =>

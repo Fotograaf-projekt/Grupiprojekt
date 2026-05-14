@@ -1,0 +1,50 @@
+﻿@page "/categories/{CategoryId:int}"
+@inject AlbumService AlbumService
+
+<PageTitle>Kategooria albumid</PageTitle>
+
+@if (category is null)
+{
+    <p>Laen…</p>
+}
+else
+{
+    <h1>@category.Name</h1>
+    <p class="text-muted">@category.Description</p>
+
+    @if (albums.Count == 0)
+    {
+        <p>Selles kategoorias pole albumeid.</p>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-3 g-3">
+            @foreach (var a in albums)
+            {
+                <div class="col">
+                    <a href="/photos/@a.Id" class="text-decoration-none">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">@a.Title</h5>
+                                <p class="card-text text-muted">@a.Description</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    }
+}
+
+@code {
+    [Parameter] public int CategoryId { get; set; }
+    private Category? category;
+    private List<Album> albums = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var all = await AlbumService.AllCategoriesAsync();
+        category = all.FirstOrDefault(c => c.Id == CategoryId);
+        albums = await AlbumService.AlbumsByCategoryAsync(CategoryId);
+    }
+}

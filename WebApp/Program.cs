@@ -41,7 +41,11 @@ builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSe
 builder.Services.AddScoped<IPhotographerRepository, PhotographerRepository>();
 builder.Services.AddScoped<ISocialLinkRepository, SocialLinkRepository>();
 builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
+builder.Services.AddScoped<IAlbumRepository, AlbumRepository>();
+builder.Services.AddScoped<IPhotoRepository, PhotoRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<PhotographerService>();
+builder.Services.AddScoped<AlbumService>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 
 var app = builder.Build();
