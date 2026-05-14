@@ -1,74 +1,149 @@
-@implements IDisposable
+﻿@implements IDisposable
 @rendermode InteractiveServer
-@inject NavigationManager Nav
+@inject NavigationManager NavigationManager
 
-<nav class="site-navbar">
-    <a class="navbar-brand" href="/">
-        FOTO<br />GRAAF
-    </a>
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">Photography</a>
+    </div>
+</div>
 
-    <button class="navbar-menu-btn" @onclick="ToggleMenu">
-        MENU
-        <div class="hamburger">
-            <span></span><span></span>
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+    <nav class="nav flex-column">
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="bi bi-about-gold" aria-hidden="true"></span> Avaleht
+            </NavLink>
         </div>
-    </button>
-</nav>
 
-<div class="nav-overlay @(menuOpen ? "open" : "")">
-    <button class="nav-overlay-close" @onclick="ToggleMenu">✕ SULGE</button>
-    <ul class="nav-overlay-links">
-        <li><a href="/">Avaleht</a></li>
-        <li><a href="/about">Minust</a></li>
-        <li><a href="/services">Teenused</a></li>
-        <li><a href="/albums">Albumid</a></li>
-        <li><a href="/categories">Kategooriad</a></li>
-        <li><a href="/client/profile">Kliendi profiil</a></li>
-        <li><a href="/availability">Saadavus</a></li>
-        <li><a href="/contact">Kontakt</a></li>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="about">
+                <span class="bi bi-about-gold" aria-hidden="true"></span> Minust
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="services">
+                <span class="bi bi-services-gold" aria-hidden="true"></span> Teenused
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="albums">
+                <span class="bi bi-albums-gold" aria-hidden="true"></span> Albumid
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="categories">
+                <span class="bi bi-categories-gold" aria-hidden="true"></span> Kategooriad
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="client/profile">
+                <span class="bi bi-about-gold" aria-hidden="true"></span> Minu profiil
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="availability">
+                <span class="bi bi-services-gold" aria-hidden="true"></span> Saadavus
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="contact">
+                <span class="bi bi-about-gold" aria-hidden="true"></span> Kontakt
+            </NavLink>
+        </div>
+
         <AuthorizeView>
             <Authorized>
-                <li><a href="/admin/photographer">Admin · Profiil</a></li>
-                <li><a href="/admin/services">Admin · Teenused</a></li>
-                <li><a href="/admin/social-links">Admin · Sotsiaalmeedia</a></li>
-                <li><a href="/admin/albums">Admin · Albumid</a></li>
-                <li><a href="/admin/photos">Admin · Fotod</a></li>
-                <li><a href="/admin/categories">Admin · Kategooriad</a></li>
-                <li>
+                <div class="menu-divider"></div>
+                <div class="menu-section-title">Haldus</div>
+
+                <div class="nav-item px-3 admin-item">
+                    <NavLink class="nav-link" href="admin/photographer">
+                        <span class="bi bi-admin-lock" aria-hidden="true"></span> Admin · Profiil
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3 admin-item">
+                    <NavLink class="nav-link" href="admin/services">
+                        <span class="bi bi-admin-lock" aria-hidden="true"></span> Admin · Teenused
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3 admin-item">
+                    <NavLink class="nav-link" href="admin/social-links">
+                        <span class="bi bi-admin-lock" aria-hidden="true"></span> Admin · Sotsid
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3 admin-item">
+                    <NavLink class="nav-link" href="admin/albums">
+                        <span class="bi bi-admin-lock" aria-hidden="true"></span> Admin · Albumid
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3 admin-item">
+                    <NavLink class="nav-link" href="admin/photos">
+                        <span class="bi bi-admin-lock" aria-hidden="true"></span> Admin · Fotod
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3 admin-item">
+                    <NavLink class="nav-link" href="admin/categories">
+                        <span class="bi bi-admin-lock" aria-hidden="true"></span> Admin · Kategooriad
+                    </NavLink>
+                </div>
+
+                <div class="menu-divider"></div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="Account/Manage">
+                        <span class="bi bi-about-gold" aria-hidden="true"></span> @context.User.Identity?.Name
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
                     <form action="Account/Logout" method="post">
                         <AntiforgeryToken />
                         <input type="hidden" name="ReturnUrl" value="@currentUrl" />
-                        <button type="submit">
-                            Logi välja
+                        <button type="submit" class="nav-link w-100 text-start border-0 bg-transparent p-0">
+                            <span class="bi bi-admin-lock" aria-hidden="true" style="filter: grayscale(1); opacity: 0.5;"></span> Logout
                         </button>
                     </form>
-                </li>
+                </div>
             </Authorized>
+            
             <NotAuthorized>
-                <li><a href="Account/Login">Logi sisse</a></li>
+                <div class="menu-divider"></div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="Account/Login">
+                        <span class="bi bi-admin-lock" aria-hidden="true"></span> Logi sisse
+                    </NavLink>
+                </div>
             </NotAuthorized>
         </AuthorizeView>
-    </ul>
+    </nav>
 </div>
 
 @code {
-    private bool menuOpen;
     private string? currentUrl;
 
     protected override void OnInitialized()
     {
-        currentUrl = Nav.ToBaseRelativePath(Nav.Uri);
-        Nav.LocationChanged += OnLocationChanged;
+        currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+        NavigationManager.LocationChanged += OnLocationChanged;
     }
-
-    private void ToggleMenu() => menuOpen = !menuOpen;
 
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
     {
-        menuOpen = false;
-        currentUrl = Nav.ToBaseRelativePath(e.Location);
+        currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
         StateHasChanged();
     }
 
-    public void Dispose() => Nav.LocationChanged -= OnLocationChanged;
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+    }
 }
