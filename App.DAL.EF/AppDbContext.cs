@@ -62,7 +62,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
             .WithMany(c => c.Photos)
             .HasForeignKey(p => p.CategoryId)
             .OnDelete(DeleteBehavior.SetNull);
-            }
+
         builder.Entity<ContactMessage>()
             .HasOne(m => m.Client)
             .WithMany(c => c.ContactMessages)
