@@ -143,3 +143,73 @@
     }
 }
 
+@implements IDisposable
+@rendermode InteractiveServer
+@inject NavigationManager Nav
+
+<nav class="site-navbar">
+    <a class="navbar-brand" href="/">
+        FOTO<br />GRAAF
+    </a>
+
+    <button class="navbar-menu-btn" @onclick="ToggleMenu">
+        MENU
+        <div class="hamburger">
+            <span></span><span></span>
+        </div>
+    </button>
+</nav>
+
+<div class="nav-overlay @(menuOpen ? "open" : "")">
+    <button class="nav-overlay-close" @onclick="ToggleMenu">✕ SULGE</button>
+    <ul class="nav-overlay-links">
+        <li><a href="/">Avaleht</a></li>
+        <li><a href="/about">Minust</a></li>
+        <li><a href="/services">Teenused</a></li>
+        <li><a href="/client/profile">Kliendi profiil</a></li>
+        <li><a href="/availability">Saadavus</a></li>
+        <li><a href="/contact">Kontakt</a></li>
+        <AuthorizeView>
+            <Authorized>
+                <li><a href="/admin/photographer">Admin · Profiil</a></li>
+                <li><a href="/admin/services">Admin · Teenused</a></li>
+                <li><a href="/admin/social-links">Admin · Sotsiaalmeedia</a></li>
+                <li>
+                    <form action="Account/Logout" method="post">
+                        <AntiforgeryToken />
+                        <input type="hidden" name="ReturnUrl" value="@currentUrl" />
+                        <button type="submit"
+                                style="background:none;border:none;padding:0;font-family:inherit;font-size:2.5rem;font-weight:300;color:var(--dark);cursor:pointer;letter-spacing:0.05em;">
+                            Logi välja
+                        </button>
+                    </form>
+                </li>
+            </Authorized>
+            <NotAuthorized>
+                <li><a href="Account/Login">Logi sisse</a></li>
+            </NotAuthorized>
+        </AuthorizeView>
+    </ul>
+</div>
+
+@code {
+    private bool menuOpen;
+    private string? currentUrl;
+
+    protected override void OnInitialized()
+    {
+        currentUrl = Nav.ToBaseRelativePath(Nav.Uri);
+        Nav.LocationChanged += OnLocationChanged;
+    }
+
+    private void ToggleMenu() => menuOpen = !menuOpen;
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        menuOpen = false;
+        currentUrl = Nav.ToBaseRelativePath(e.Location);
+        StateHasChanged();
+    }
+
+    public void Dispose() => Nav.LocationChanged -= OnLocationChanged;
+}

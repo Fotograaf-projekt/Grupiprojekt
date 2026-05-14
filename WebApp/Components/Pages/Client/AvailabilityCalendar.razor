@@ -1,0 +1,111 @@
+@page "/availability"
+
+@inject AppDbContext Db
+@inject NavigationManager Nav
+@rendermode InteractiveServer
+
+<PageTitle>Broneerimine</PageTitle>
+
+<h3>Saadavus ja broneerimine</h3>
+
+<div class="date-picker">
+    <label>Vali kuupäev: </label>
+    <input type="date" @bind="selectedDate" @bind:after="LoadBookings" />
+</div>
+
+<div class="calendar">
+    @foreach (var slot in timeSlots)
+    {
+        var isBooked = IsSlotBooked(slot);
+        <div class="time-slot @(isBooked ? "booked" : "available")"
+             @onclick="() => HandleSlotClick(slot, isBooked)">
+            <span class="time">@slot.ToString(@"hh\:mm") - @slot.Add(TimeSpan.FromHours(2)).ToString(@"hh\:mm")</span>
+            <span class="status">@(isBooked ? "Broneeritud" : "Vaba")</span>
+        </div>
+    }
+</div>
+
+<style>
+    .date-picker {
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+    }
+    .calendar {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+        max-width: 800px;
+    }
+    .time-slot {
+        padding: 0.75rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        transition: background 0.2s;
+    }
+    .available {
+        background-color: #d4edda;
+        color: #155724;
+    }
+    .available:hover {
+        background-color: #b1dfbb;
+    }
+    .booked {
+        background-color: #f8d7da;
+        color: #721c24;
+        cursor: not-allowed;
+    }
+    .time {
+        font-weight: bold;
+    }
+</style>
+
+@code {
+    private DateTime selectedDate = DateTime.Today;
+    private List<TimeSpan> timeSlots = new();
+    private List<Booking> bookings = new();
+    protected override async Task OnInitializedAsync()
+    {
+        GenerateTimeSlots();
+        await LoadBookings();
+    }
+    private void GenerateTimeSlots()
+    {
+        timeSlots.Clear();
+        var start = new TimeSpan(11, 0, 0); // 11:00
+        var end = new TimeSpan(19, 0, 0);   // 19:00
+        var current = start;
+        while (current.Add(TimeSpan.FromHours(2)) <= end)
+        {
+            timeSlots.Add(current);
+            current = current.Add(TimeSpan.FromHours(2));
+        }
+    }
+    private async Task LoadBookings()
+    {
+        bookings = await Db.Bookings
+            .Include(b => b.Service)  // lisa see, et teenus tuleks ka kaasa
+            .Where(b => b.Date.Date == selectedDate.Date)
+            .ToListAsync();
+    }
+    private bool IsSlotBooked(TimeSpan slot)
+    {
+        var slotEnd = slot.Add(TimeSpan.FromHours(2));
+        return bookings.Any(b =>
+        {
+            var duration = b.Service?.DurationHours ?? 2;
+            // Pulm (24h või rohkem) blokeerib terve päeva
+            if (duration >= 24) return true;
+            var bookingStart = b.Date.TimeOfDay;
+            var bookingEnd = bookingStart.Add(TimeSpan.FromHours(duration));
+            return bookingStart < slotEnd && bookingEnd > slot;
+        });
+    }
+    private void HandleSlotClick(TimeSpan slot, bool isBooked)
+    {
+        if (isBooked) return;
+        Nav.NavigateTo($"/booking/new?date={selectedDate:yyyy-MM-dd}&time={slot:hh\\:mm}");
+    }
+}

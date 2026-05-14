@@ -1,7 +1,63 @@
-﻿@page "/"
+@page "/"
+@inject PhotographerService PhotographerService
 
-<PageTitle>Home</PageTitle>
+<PageTitle>@(photographer?.Name ?? "Fotograaf")</PageTitle>
 
-<h1>Hello, world!</h1>
+@* Hero – täisekraani portreefoto *@
+<div class="hero-panel"
+     style="background-image: url('https://picsum.photos/seed/photohero/1200/900?grayscale')">
+    <div class="hero-content">
+        <p class="hero-eyebrow">Fotograaf</p>
+        <h1 class="hero-title">@(photographer?.Name ?? "Fotograaf")</h1>
+        <a href="/services" class="hero-btn">Broneeri aeg</a>
+    </div>
+</div>
 
-Welcome to your new app.
+@* Teenuste galeriipaneel *@
+<a href="/services" class="gallery-panel"
+   style="background-image: url('https://picsum.photos/seed/services/1200/750?grayscale'); display:block;">
+    <div class="gallery-panel-content">
+        <span class="panel-label">Teenused</span>
+        <span class="panel-arrow">→</span>
+    </div>
+</a>
+
+@* About galeriipaneel *@
+<a href="/about" class="gallery-panel"
+   style="background-image: url('https://picsum.photos/seed/aboutme/1200/750?grayscale'); display:block;">
+    <div class="gallery-panel-content">
+        <span class="panel-label">Minust</span>
+        <span class="panel-arrow">→</span>
+    </div>
+</a>
+
+@* CTA *@
+<div class="cta-section">
+    <a href="/services" class="btn-cta">Vaata kõiki teenuseid</a>
+</div>
+
+@* Tsitaat *@
+<div class="quote-section">
+    <blockquote>
+        "Photography is an art of observation. It has little to do with the things you see
+        and everything to do with the way you see them."
+    </blockquote>
+    <cite>— Elliott Erwitt</cite>
+</div>
+
+@* Sotsiaalmeedia *@
+@if (photographer?.SocialLinks?.Count > 0)
+{
+    <div style="padding: 0 2.5rem 4rem; text-align:center;">
+        <SocialLinksBar Links="photographer.SocialLinks" />
+    </div>
+}
+
+@code {
+    private Photographer? photographer;
+
+    protected override async Task OnInitializedAsync()
+    {
+        photographer = await PhotographerService.GetMainAsync();
+    }
+}

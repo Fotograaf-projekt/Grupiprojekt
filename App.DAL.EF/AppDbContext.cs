@@ -13,6 +13,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
     public DbSet<Album> Albums { get; set; }
     public DbSet<Photo> Photos { get; set; }
     public DbSet<Category> Categories { get; set; }
+    public DbSet<Booking> Bookings => Set<Booking>();
+    public DbSet<Client> Clients => Set<Client>();
+    public DbSet<ContactMessage> ContactMessages => Set<ContactMessage>();
+    public DbSet<Availability> Availabilities => Set<Availability>();
+   
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -58,4 +63,27 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
             .HasForeignKey(p => p.CategoryId)
             .OnDelete(DeleteBehavior.SetNull);
             }
+        builder.Entity<ContactMessage>()
+            .HasOne(m => m.Client)
+            .WithMany(c => c.ContactMessages)
+            .HasForeignKey(m => m.ClientId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<ContactMessage>()
+            .HasOne(m => m.Service)
+            .WithMany()
+            .HasForeignKey(m => m.ServiceId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Client>()
+            .HasMany(c => c.Bookings)
+            .WithOne()
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Availability>()
+            .HasOne(a => a.Booking)
+            .WithOne()
+            .HasForeignKey<Availability>(a => a.BookingId)
+            .OnDelete(DeleteBehavior.SetNull);
+    }
 }
