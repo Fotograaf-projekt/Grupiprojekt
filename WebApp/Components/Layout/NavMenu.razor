@@ -1,9 +1,10 @@
 ﻿@implements IDisposable
+@rendermode InteractiveServer
 @inject NavigationManager NavigationManager
 
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">Photography</a>
+        <a class="navbar-brand" href="">Marta Photography</a>
     </div>
 </div>
 
@@ -14,7 +15,13 @@
 
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-about-gold" aria-hidden="true"></span> Meist
+                <span class="bi bi-about-gold" aria-hidden="true"></span> Avaleht
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="about">
+                <span class="bi bi-about-gold" aria-hidden="true"></span> Minust
             </NavLink>
         </div>
 
@@ -36,6 +43,24 @@
             </NavLink>
         </div>
 
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="client/profile">
+                <span class="bi bi-about-gold" aria-hidden="true"></span> Minu profiil
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="availability">
+                <span class="bi bi-services-gold" aria-hidden="true"></span> Saadavus
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="contact">
+                <span class="bi bi-about-gold" aria-hidden="true"></span> Kontakt
+            </NavLink>
+        </div>
+
         <AuthorizeView>
             <Authorized>
                 <div class="menu-divider"></div>
@@ -43,32 +68,32 @@
 
                 <div class="nav-item px-3 admin-item">
                     <NavLink class="nav-link" href="admin/photographer">
-                        <span class="bi bi-admin-lock" aria-hidden="true"></span> Profiil
+                        <span class="bi bi-admin-lock" aria-hidden="true"></span> Admin · Profiil
                     </NavLink>
                 </div>
                 <div class="nav-item px-3 admin-item">
                     <NavLink class="nav-link" href="admin/services">
-                        <span class="bi bi-admin-lock" aria-hidden="true"></span> Teenused
+                        <span class="bi bi-admin-lock" aria-hidden="true"></span> Admin · Teenused
                     </NavLink>
                 </div>
                 <div class="nav-item px-3 admin-item">
                     <NavLink class="nav-link" href="admin/social-links">
-                        <span class="bi bi-admin-lock" aria-hidden="true"></span> Social
+                        <span class="bi bi-admin-lock" aria-hidden="true"></span> Admin · Sotsid
                     </NavLink>
                 </div>
                 <div class="nav-item px-3 admin-item">
                     <NavLink class="nav-link" href="admin/albums">
-                        <span class="bi bi-admin-lock" aria-hidden="true"></span> Albumid
+                        <span class="bi bi-admin-lock" aria-hidden="true"></span> Admin · Albumid
                     </NavLink>
                 </div>
                 <div class="nav-item px-3 admin-item">
                     <NavLink class="nav-link" href="admin/photos">
-                        <span class="bi bi-admin-lock" aria-hidden="true"></span> Fotod
+                        <span class="bi bi-admin-lock" aria-hidden="true"></span> Admin · Fotod
                     </NavLink>
                 </div>
                 <div class="nav-item px-3 admin-item">
                     <NavLink class="nav-link" href="admin/categories">
-                        <span class="bi bi-admin-lock" aria-hidden="true"></span> Kategooriad
+                        <span class="bi bi-admin-lock" aria-hidden="true"></span> Admin · Kategooriad
                     </NavLink>
                 </div>
 
@@ -94,7 +119,7 @@
                 <div class="menu-divider"></div>
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="Account/Login">
-                        <span class="bi bi-admin-lock" aria-hidden="true"></span> Sisselogimine
+                        <span class="bi bi-admin-lock" aria-hidden="true"></span> Logi sisse
                     </NavLink>
                 </div>
             </NotAuthorized>

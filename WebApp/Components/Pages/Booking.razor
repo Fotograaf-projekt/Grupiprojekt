@@ -1,0 +1,53 @@
+﻿@page "/booking"
+@rendermode InteractiveServer
+
+@using Microsoft.AspNetCore.Components.Forms
+
+
+<PageTitle>Booking</PageTitle>
+
+<h1>Book a Session</h1>
+
+<EditForm Model="booking" OnValidSubmit="Book">
+    <DataAnnotationsValidator />
+
+    <div class="mb-3">
+        <label>Date</label>
+        <InputDate @bind-Value="booking.Date" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Status</label>
+        <InputText @bind-Value="booking.Status" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Total</label>
+        <InputNumber @bind-Value="booking.Total" class="form-control" />
+    </div>
+
+    <button class="btn btn-primary" type="submit">
+        Book Now
+    </button>
+</EditForm>
+
+@if (saved)
+{
+    <p class="text-success mt-3">Booking request sent successfully.</p>
+}
+
+@code {
+    private global::App.Domain.Booking booking = new()
+    {
+        Date = DateTime.Today,
+        Status = "Pending",
+        Total = 0
+    };
+
+    private bool saved;
+
+    private void Book()
+    {
+        saved = true;
+    }
+}

@@ -17,4 +17,5 @@ public class Photographer : NamedEntity
 
     public ICollection<SocialLink>? SocialLinks { get; set; }
     public ICollection<Service>? Services { get; set; }
+
 }
