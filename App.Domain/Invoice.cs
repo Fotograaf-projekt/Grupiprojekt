@@ -7,7 +7,7 @@ public class Invoice : BaseEntity
 {
     public DateTime IssuedDate { get; set; }
 
-    public int Amount { get; set; }
+    public decimal Amount { get; set; }
 
     [MaxLength(64)]
     public string Status { get; set; } = "Unpaid";
