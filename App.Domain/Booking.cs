@@ -15,5 +15,7 @@ public class Booking : BaseEntity
     public decimal Total { get; set; }
     public int ServiceId { get; set; }
     public Service? Service { get; set; }
+    public Invoice? Invoice {get; set; }
+    public ICollection<Review>? Reviews {get; set; }
 }
 

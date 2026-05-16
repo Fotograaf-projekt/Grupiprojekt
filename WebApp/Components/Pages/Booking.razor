@@ -1,12 +1,8 @@
 ﻿@page "/booking"
 @rendermode InteractiveServer
-<<<<<<< HEAD
-@inject NavigationManager Navigation
-=======
 
 @using Microsoft.AspNetCore.Components.Forms
 
->>>>>>> main
 
 <PageTitle>Booking</PageTitle>
 
@@ -16,34 +12,6 @@
     <DataAnnotationsValidator />
 
     <div class="mb-3">
-<<<<<<< HEAD
-        <label>Name</label>
-        <InputText class="form-control" @bind-Value="clientName" />
-    </div>
-
-    <div class="mb-3">
-        <label>Email</label>
-        <InputText class="form-control" @bind-Value="clientEmail" />
-    </div>
-
-    <div class="mb-3">
-        <label>Date</label>
-        <InputDate class="form-control" @bind-Value="booking.Date" />
-    </div>
-
-    <div class="mb-3">
-        <label>Time</label>
-        <InputText class="form-control" @bind-Value="time" placeholder="14:00" />
-    </div>
-
-    <div class="mb-3">
-        <label>Message</label>
-        <InputTextArea class="form-control" @bind-Value="message" />
-    </div>
-
-    <button class="btn btn-primary" type="submit">
-        Broneeri
-=======
         <label>Date</label>
         <InputDate @bind-Value="booking.Date" class="form-control" />
     </div>
@@ -60,7 +28,6 @@
 
     <button class="btn btn-primary" type="submit">
         Book Now
->>>>>>> main
     </button>
 </EditForm>
 
@@ -77,28 +44,10 @@
         Total = 0
     };
 
-<<<<<<< HEAD
-    private string? clientName;
-    private string? clientEmail;
-    private string? time;
-    private string? message;
-
-    private bool saved;
-
-    private async Task Book()
-{
-    saved = true;
-
-    await Task.Delay(2000);
-
-    Navigation.NavigateTo("/");
-}
-=======
     private bool saved;
 
     private void Book()
     {
         saved = true;
     }
->>>>>>> main
 }

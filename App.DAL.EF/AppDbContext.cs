@@ -14,6 +14,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
     public DbSet<Photo> Photos { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Booking> Bookings => Set<Booking>();
+    public DbSet<Invoice> Invoices => Set<Invoice>();
+    public DbSet<Review> Reviews => Set<Review>();
     public DbSet<Client> Clients => Set<Client>();
     public DbSet<ContactMessage> ContactMessages => Set<ContactMessage>();
     public DbSet<Availability> Availabilities => Set<Availability>();

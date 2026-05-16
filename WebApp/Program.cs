@@ -47,6 +47,8 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<PhotographerService>();
 builder.Services.AddScoped<AlbumService>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 
 var app = builder.Build();
 
