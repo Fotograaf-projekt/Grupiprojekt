@@ -7,6 +7,7 @@ namespace App.BLL;
  
 public class BookingService(
     IBookingRepository bookingRepo,
+    IServiceRepository serviceRepo,
     AppDbContext db)
 {
   
@@ -23,12 +24,16 @@ public class BookingService(
     public async Task<Booking> CreateAsync(
         string clientName,
         string clientEmail,
-        DateTime date)
+        DateTime date,
+         int serviceId)
     {
         if (date.Date < DateTime.Today)
-            throw new ArgumentException("Cannot book a past date.");
+            throw new ArgumentException("Ei saa broneerida möödunud kuupäeva.");
  
-        
+        var service = await serviceRepo.FindAsync(serviceId)
+                      ?? throw new ArgumentException("Valitud teenust ei leitud.");
+ 
+        // TODO: kui ClientRepository on valmis, asenda AppDbContext ClientRepository'ga
         var client = await db.Clients
             .FirstOrDefaultAsync(c => c.Email == clientEmail.Trim().ToLower());
  
@@ -45,10 +50,11 @@ public class BookingService(
  
         var booking = new Booking
         {
-            ClientId = client.Id,
-            Date     = date,
-            Status   = "Pending",
-            Total    = 0  // сумма будет выставлена через Invoice
+            ClientId  = client.Id,
+            ServiceId = serviceId,
+            Date      = date,
+            Status    = "Pending",
+            Total     = service.Price
         };
  
         await bookingRepo.AddAsync(booking);
