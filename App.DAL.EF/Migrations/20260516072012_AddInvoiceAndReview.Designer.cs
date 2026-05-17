@@ -3,6 +3,7 @@ using System;
 using App.DAL.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace App.DAL.EF.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260516072012_AddInvoiceAndReview")]
+    partial class AddInvoiceAndReview
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.8");
@@ -60,9 +63,6 @@ namespace App.DAL.EF.Migrations
                     b.Property<int?>("BookingId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("BookingId1")
-                        .HasColumnType("INTEGER");
-
                     b.Property<DateTime>("Date")
                         .HasColumnType("TEXT");
 
@@ -82,9 +82,6 @@ namespace App.DAL.EF.Migrations
                     b.HasIndex("BookingId")
                         .IsUnique();
 
-                    b.HasIndex("BookingId1")
-                        .IsUnique();
-
                     b.ToTable("Availabilities");
                 });
 
@@ -94,7 +91,7 @@ namespace App.DAL.EF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("ClientId")
+                    b.Property<int?>("ClientId")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("Date")
@@ -260,8 +257,8 @@ namespace App.DAL.EF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("Amount")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("BookingId")
                         .HasColumnType("INTEGER");
@@ -370,7 +367,6 @@ namespace App.DAL.EF.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Text")
-                        .IsRequired()
                         .HasMaxLength(2000)
                         .HasColumnType("TEXT");
 
@@ -591,28 +587,21 @@ namespace App.DAL.EF.Migrations
                         .HasForeignKey("App.Domain.Availability", "BookingId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("App.Domain.Booking", null)
-                        .WithOne("Availability")
-                        .HasForeignKey("App.Domain.Availability", "BookingId1");
-
                     b.Navigation("Booking");
                 });
 
             modelBuilder.Entity("App.Domain.Booking", b =>
                 {
-                    b.HasOne("App.Domain.Client", "Client")
+                    b.HasOne("App.Domain.Client", null)
                         .WithMany("Bookings")
                         .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("App.Domain.Service", "Service")
                         .WithMany()
                         .HasForeignKey("ServiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Client");
 
                     b.Navigation("Service");
                 });
@@ -756,8 +745,6 @@ namespace App.DAL.EF.Migrations
 
             modelBuilder.Entity("App.Domain.Booking", b =>
                 {
-                    b.Navigation("Availability");
-
                     b.Navigation("Invoice");
 
                     b.Navigation("Reviews");

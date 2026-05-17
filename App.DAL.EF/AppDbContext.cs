@@ -14,6 +14,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
     public DbSet<Photo> Photos { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Booking> Bookings => Set<Booking>();
+    public DbSet<Invoice> Invoices => Set<Invoice>();
+    public DbSet<Review> Reviews => Set<Review>();
     public DbSet<Client> Clients => Set<Client>();
     public DbSet<ContactMessage> ContactMessages => Set<ContactMessage>();
     public DbSet<Availability> Availabilities => Set<Availability>();
@@ -77,7 +79,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
 
         builder.Entity<Client>()
             .HasMany(c => c.Bookings)
-            .WithOne()
+            .WithOne(b => b.Client)
+            .HasForeignKey(b => b.ClientId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.Entity<Availability>()
@@ -85,5 +88,17 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
             .WithOne()
             .HasForeignKey<Availability>(a => a.BookingId)
             .OnDelete(DeleteBehavior.SetNull);
+            
+            builder.Entity<Invoice>()
+             .HasOne(i => i.Booking)
+             .WithOne(b => b.Invoice)
+             .HasForeignKey<Invoice>(i => i.BookingId)
+             .OnDelete(DeleteBehavior.Cascade); 
+
+             builder.Entity<Review>()
+             .HasOne(r => r.Booking)
+             .WithMany(b => b.Reviews)
+            .HasForeignKey(r => r.BookingId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
