@@ -1,7 +1,7 @@
 ﻿@page "/categories/{CategoryId:int}"
 @inject AlbumService AlbumService
 
-<PageTitle>Kategooria albumid</PageTitle>
+<PageTitle>@(category?.Name ?? "Kategooria")</PageTitle>
 
 @if (category is null)
 {
@@ -10,31 +10,135 @@
 else
 {
     <h1>@category.Name</h1>
-    <p class="text-muted">@category.Description</p>
 
     @if (albums.Count == 0)
     {
         <p>Selles kategoorias pole albumeid.</p>
     }
+    else if (albums.Count == 1)
+    {
+        <a href="/photos/@albums[0].Id" class="text-decoration-none">
+            <div class="mosaic-full" style="background-image: url('@GetCover(albums[0])')">
+                <div class="mosaic-overlay"><span class="mosaic-title">@albums[0].Title</span></div>
+            </div>
+        </a>
+    }
     else
     {
-        <div class="row row-cols-1 row-cols-md-3 g-3">
-            @foreach (var a in albums)
-            {
-                <div class="col">
-                    <a href="/photos/@a.Id" class="text-decoration-none">
-                        <div class="card h-100">
-                            <div class="card-body">
-                                <h5 class="card-title">@a.Title</h5>
-                                <p class="card-text text-muted">@a.Description</p>
+        @for (int i = 0; i < albums.Count; i += 3)
+        {
+            var idx = i;
+            <div class="mosaic-row">
+                @* Suur vasakul *@
+                <a href="/photos/@albums[idx].Id" class="text-decoration-none mosaic-large">
+                    <div class="mosaic-img" style="background-image: url('@GetCover(albums[idx])')">
+                        <div class="mosaic-overlay"><span class="mosaic-title">@albums[idx].Title</span></div>
+                    </div>
+                </a>
+
+                @* Kaks väikest paremal *@
+                <div class="mosaic-small-col">
+                    @if (idx + 1 < albums.Count)
+                    {
+                        <a href="/photos/@albums[idx + 1].Id" class="text-decoration-none">
+                            <div class="mosaic-img mosaic-small" style="background-image: url('@GetCover(albums[idx + 1])')">
+                                <div class="mosaic-overlay"><span class="mosaic-title">@albums[idx + 1].Title</span></div>
                             </div>
-                        </div>
-                    </a>
+                        </a>
+                    }
+                    else
+                    {
+                        <div class="mosaic-small mosaic-empty"></div>
+                    }
+
+                    @if (idx + 2 < albums.Count)
+                    {
+                        <a href="/photos/@albums[idx + 2].Id" class="text-decoration-none">
+                            <div class="mosaic-img mosaic-small" style="background-image: url('@GetCover(albums[idx + 2])')">
+                                <div class="mosaic-overlay"><span class="mosaic-title">@albums[idx + 2].Title</span></div>
+                            </div>
+                        </a>
+                    }
+                    else
+                    {
+                        <div class="mosaic-small mosaic-empty"></div>
+                    }
                 </div>
-            }
-        </div>
+            </div>
+        }
     }
 }
+
+<style>
+    .mosaic-row {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 8px;
+        height: 400px;
+    }
+
+    .mosaic-large {
+        flex: 2;
+    }
+
+    .mosaic-small-col {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .mosaic-img {
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        background-color: #2a2a2a;
+        position: relative;
+        transition: transform 0.3s ease;
+    }
+
+    .mosaic-full {
+        width: 100%;
+        height: 400px;
+        background-size: cover;
+        background-position: center;
+        background-color: #2a2a2a;
+        position: relative;
+        margin-bottom: 8px;
+    }
+
+    .mosaic-small {
+        flex: 1;
+    }
+
+    .mosaic-empty {
+        background-color: #1a1a1a;
+    }
+
+    .mosaic-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.35);
+        display: flex;
+        align-items: flex-end;
+        padding: 1.5rem;
+        transition: background 0.3s ease;
+    }
+
+    .mosaic-img:hover .mosaic-overlay,
+    .mosaic-full:hover .mosaic-overlay {
+        background: rgba(0, 0, 0, 0.15);
+    }
+
+    .mosaic-title {
+        color: #f5e6d0;
+        font-size: 1.3rem;
+        letter-spacing: 0.15em;
+        font-weight: 300;
+        text-transform: uppercase;
+    }
+</style>
 
 @code {
     [Parameter] public int CategoryId { get; set; }
@@ -46,5 +150,10 @@ else
         var all = await AlbumService.AllCategoriesAsync();
         category = all.FirstOrDefault(c => c.Id == CategoryId);
         albums = await AlbumService.AlbumsByCategoryAsync(CategoryId);
+    }
+
+    private string GetCover(Album a)
+    {
+        return a.Photos?.FirstOrDefault()?.ImageUrl ?? "";
     }
 }

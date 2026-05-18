@@ -10,22 +10,61 @@
 }
 else
 {
-    <div class="row row-cols-1 row-cols-md-3 g-3">
+    <div class="d-flex flex-column gap-4">
         @foreach (var c in categories)
         {
-            <div class="col">
-                <a href="/categories/@c.Id" class="text-decoration-none">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">@c.Name</h5>
-                            <p class="card-text text-muted">@c.Description</p>
-                        </div>
+            <a href="/categories/@c.Id" class="text-decoration-none category-banner">
+                <div class="banner-inner" style="background-image: url('@GetCoverImage(c)')">
+                    <div class="banner-overlay">
+                        <h2 class="banner-title">@c.Name.ToUpper()</h2>
                     </div>
-                </a>
-            </div>
+                </div>
+            </a>
         }
     </div>
 }
+
+<style>
+    .category-banner {
+        display: block;
+        width: 100%;
+    }
+
+    .banner-inner {
+        height: 350px;
+        background-size: cover;
+        background-position: center;
+        background-color: #2a2a2a;
+        position: relative;
+        transition: transform 0.3s ease;
+    }
+
+    .category-banner:hover .banner-inner {
+        transform: scale(1.01);
+    }
+
+    .banner-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.3s ease;
+    }
+
+    .category-banner:hover .banner-overlay {
+        background: rgba(0, 0, 0, 0.25);
+    }
+
+    .banner-title {
+        color: #f5e6d0;
+        font-size: 2.5rem;
+        letter-spacing: 0.3em;
+        font-weight: 300;
+        text-align: center;
+    }
+</style>
 
 @code {
     private List<Category> categories = new();
@@ -33,5 +72,13 @@ else
     protected override async Task OnInitializedAsync()
     {
         categories = await AlbumService.AllCategoriesAsync();
+    }
+
+    private string GetCoverImage(Category c)
+    {
+        var firstPhoto = c.Albums?
+            .SelectMany(a => a.Photos ?? new List<Photo>())
+            .FirstOrDefault();
+        return firstPhoto?.ImageUrl ?? "";
     }
 }

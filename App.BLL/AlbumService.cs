@@ -9,8 +9,7 @@ public class AlbumService(
     ICategoryRepository categoryRepo)
 {
     public Task<List<Category>> AllCategoriesAsync() =>
-        categoryRepo.AllAsync();
-
+    categoryRepo.AllWithAlbumsAsync();
     public async Task AddCategoryAsync(Category category)
     {
         await categoryRepo.AddAsync(category);
