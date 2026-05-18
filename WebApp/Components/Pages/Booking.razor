@@ -1,10 +1,9 @@
 ﻿@page "/booking"
 @rendermode InteractiveServer
-@using Microsoft.AspNetCore.Components.Forms
-@using global::App.DAL.EF.Repositories
-@using global::App.BLL
 @using System.ComponentModel.DataAnnotations
 @using global::App.Domain
+@using global::App.BLL
+@using global::App.DAL.EF.Repositories
 @inject BookingService BookingService
 @inject IServiceRepository ServiceRepo
 @inject NavigationManager Nav
@@ -28,10 +27,13 @@
 
     @if (!saved)
     {
-        <div class="mb-3">
-            <label class="form-label fw-bold">Valitud aeg</label>
-            <p class="form-control-plaintext">@model.Date.ToString("dd.MM.yyyy HH:mm")</p>
-        </div>
+        @if (model.Date.HasValue)
+        {
+            <div class="mb-3">
+                <label class="form-label fw-bold">Valitud aeg</label>
+                <p class="form-control-plaintext">@model.Date.Value.ToString("dd.MM.yyyy HH:mm")</p>
+            </div>
+        }
 
         <EditForm Model="model" OnValidSubmit="Book">
             <DataAnnotationsValidator />
@@ -86,8 +88,8 @@
         if (DateTime.TryParse(Date, out var date))
             model.Date = date;
 
-        if (TimeSpan.TryParse(Time, out var time))
-            model.Date = model.Date.Date + time;
+        if (TimeSpan.TryParse(Time, out var time) && model.Date.HasValue)
+            model.Date = model.Date.Value.Date + time;
     }
 
     private async Task Book()
@@ -99,7 +101,7 @@
             await BookingService.CreateAsync(
                 clientName:  model.ClientName,
                 clientEmail: model.ClientEmail,
-                date:        model.Date,
+                date:        model.Date.Value,
                 serviceId:   model.ServiceId);
 
             saved = true;
@@ -115,7 +117,7 @@
     }
 
     private class FormModel
-    {
+  {
         [Required(ErrorMessage = "Nimi on kohustuslik.")]
         [MaxLength(128)]
         public string ClientName { get; set; } = "";
@@ -127,6 +129,6 @@
         [Range(1, int.MaxValue, ErrorMessage = "Palun vali teenus.")]
         public int ServiceId { get; set; }
 
-        public DateTime Date { get; set; } = DateTime.Today.AddDays(1);
+        public DateTime? Date { get; set; }
     }
 }

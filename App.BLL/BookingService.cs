@@ -24,10 +24,10 @@ public class BookingService(
     public async Task<Booking> CreateAsync(
         string clientName,
         string clientEmail,
-        DateTime date,
+        DateTime? date,
          int serviceId)
     {
-        if (date.Date < DateTime.Today)
+        if (!date.HasValue || date.Value.Date < DateTime.Today)
             throw new ArgumentException("Ei saa broneerida möödunud kuupäeva.");
  
         var service = await serviceRepo.FindAsync(serviceId)
@@ -52,7 +52,7 @@ public class BookingService(
         {
             ClientId  = client.Id,
             ServiceId = serviceId,
-            Date      = date,
+            Date      = date.Value,
             Status    = "Pending",
             Total     = service.Price
         };
