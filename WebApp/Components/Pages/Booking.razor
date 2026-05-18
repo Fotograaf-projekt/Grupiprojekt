@@ -1,53 +1,134 @@
 ﻿@page "/booking"
 @rendermode InteractiveServer
+@using System.ComponentModel.DataAnnotations
+@using global::App.Domain
+@using global::App.BLL
+@using global::App.DAL.EF.Repositories
+@inject BookingService BookingService
+@inject IServiceRepository ServiceRepo
+@inject NavigationManager Nav
 
-@using Microsoft.AspNetCore.Components.Forms
+<PageTitle>Broneeri seanss</PageTitle>
 
+<div class="container py-4" style="max-width: 560px;">
+    <h2 class="mb-4">Broneeri seanss</h2>
 
-<PageTitle>Booking</PageTitle>
+    @if (saved)
+    {
+        <div class="alert alert-success">
+            <strong>Broneering edukalt saadetud!</strong> Võtame teiega peagi ühendust.
+        </div>
+        <a href="/availability" class="btn btn-outline-primary mt-2">Tagasi kalendrisse</a>
+    }
+    else if (error != null)
+    {
+        <div class="alert alert-danger">@error</div>
+    }
 
-<h1>Book a Session</h1>
+    @if (!saved)
+    {
+        @if (model.Date.HasValue)
+        {
+            <div class="mb-3">
+                <label class="form-label fw-bold">Valitud aeg</label>
+                <p class="form-control-plaintext">@model.Date.Value.ToString("dd.MM.yyyy HH:mm")</p>
+            </div>
+        }
 
-<EditForm Model="booking" OnValidSubmit="Book">
-    <DataAnnotationsValidator />
+        <EditForm Model="model" OnValidSubmit="Book">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
 
-    <div class="mb-3">
-        <label>Date</label>
-        <InputDate @bind-Value="booking.Date" class="form-control" />
-    </div>
+            <div class="mb-3">
+                <label class="form-label">Nimi</label>
+                <InputText @bind-Value="model.ClientName" class="form-control" />
+                <ValidationMessage For="() => model.ClientName" />
+            </div>
 
-    <div class="mb-3">
-        <label>Status</label>
-        <InputText @bind-Value="booking.Status" class="form-control" />
-    </div>
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <InputText @bind-Value="model.ClientEmail" class="form-control" />
+                <ValidationMessage For="() => model.ClientEmail" />
+            </div>
 
-    <div class="mb-3">
-        <label>Total</label>
-        <InputNumber @bind-Value="booking.Total" class="form-control" />
-    </div>
+            <div class="mb-3">
+                <label class="form-label">Teenus</label>
+                <InputSelect @bind-Value="model.ServiceId" class="form-select">
+                    <option value="0">— vali teenus —</option>
+                    @foreach (var s in services)
+                    {
+                        <option value="@s.Id">@s.Name — @s.DurationHours h — €@s.Price</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="() => model.ServiceId" />
+            </div>
 
-    <button class="btn btn-primary" type="submit">
-        Book Now
-    </button>
-</EditForm>
-
-@if (saved)
-{
-    <p class="text-success mt-3">Booking request sent successfully.</p>
-}
+            <button class="btn btn-primary" type="submit" disabled="@sending">
+                @(sending ? "Saadan..." : "Broneeri")
+            </button>
+            <a href="/availability" class="btn btn-outline-secondary ms-2">Tühista</a>
+        </EditForm>
+    }
+</div>
 
 @code {
-    private global::App.Domain.Booking booking = new()
-    {
-        Date = DateTime.Today,
-        Status = "Pending",
-        Total = 0
-    };
+    [SupplyParameterFromQuery] public string? Date { get; set; }
+    [SupplyParameterFromQuery] public string? Time { get; set; }
 
+    private List<Service> services = new();
+    private FormModel model = new();
     private bool saved;
+    private bool sending;
+    private string? error;
 
-    private void Book()
+    protected override async Task OnInitializedAsync()
     {
-        saved = true;
+        services = await ServiceRepo.AllAsync();
+
+        if (DateTime.TryParse(Date, out var date))
+            model.Date = date;
+
+        if (TimeSpan.TryParse(Time, out var time) && model.Date.HasValue)
+            model.Date = model.Date.Value.Date + time;
+    }
+
+    private async Task Book()
+    {
+        sending = true;
+        error = null;
+        try
+        {
+            await BookingService.CreateAsync(
+                clientName:  model.ClientName,
+                clientEmail: model.ClientEmail,
+                date:        model.Date.Value,
+                serviceId:   model.ServiceId);
+
+            saved = true;
+        }
+        catch (ArgumentException ex)
+        {
+            error = ex.Message;
+        }
+        finally
+        {
+            sending = false;
+        }
+    }
+
+    private class FormModel
+  {
+        [Required(ErrorMessage = "Nimi on kohustuslik.")]
+        [MaxLength(128)]
+        public string ClientName { get; set; } = "";
+
+        [Required(ErrorMessage = "Email on kohustuslik.")]
+        [EmailAddress(ErrorMessage = "Vale emaili formaat.")]
+        public string ClientEmail { get; set; } = "";
+
+        [Range(1, int.MaxValue, ErrorMessage = "Palun vali teenus.")]
+        public int ServiceId { get; set; }
+
+        public DateTime? Date { get; set; }
     }
 }

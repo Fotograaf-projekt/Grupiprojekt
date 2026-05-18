@@ -106,6 +106,6 @@
     private void HandleSlotClick(TimeSpan slot, bool isBooked)
     {
         if (isBooked) return;
-        Nav.NavigateTo($"/booking/new?date={selectedDate:yyyy-MM-dd}&time={slot:hh\\:mm}");
+        Nav.NavigateTo($"/booking?date={selectedDate:yyyy-MM-dd}&time={slot:hh\\:mm}");
     }
 }
